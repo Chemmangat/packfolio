@@ -29,13 +29,16 @@ interface SearchSuggestion {
 export default function Home() {
   const [username, setUsername] = useState('');
   const [packages, setPackages] = useState<PackageData[]>([]);
+  const [allPackages, setAllPackages] = useState<any[]>([]); // All package metadata
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [searched, setSearched] = useState(false);
   const [registry, setRegistry] = useState<Registry>('npm');
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [showContributeModal, setShowContributeModal] = useState(false);
+  const [rateLimited, setRateLimited] = useState(false);
   const { theme, toggleTheme } = useTheme();
   
   // Refs to track mounted state and abort controllers
@@ -54,7 +57,7 @@ export default function Home() {
     };
   }, []);
 
-  // Debounced search for suggestions
+  // Debounced search for suggestions with rate limiting
   useEffect(() => {
     const fetchSuggestions = async () => {
       // Don't fetch if loading or search already completed
@@ -62,10 +65,12 @@ export default function Home() {
         return;
       }
       
-      if (!username.trim() || username.length < 2) {
+      // Require at least 3 characters to reduce API calls
+      if (!username.trim() || username.length < 3) {
         setSuggestions([]);
         setLoadingSuggestions(false);
         setShowSuggestions(false);
+        setRateLimited(false);
         return;
       }
 
@@ -74,11 +79,25 @@ export default function Home() {
       suggestionsAbortRef.current = new AbortController();
 
       setLoadingSuggestions(true);
+      setRateLimited(false);
+      
       try {
         const response = await fetch(
-          `https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(username)}&size=8`,
+          `https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(username)}&size=6`,
           { signal: suggestionsAbortRef.current.signal }
         );
+        
+        // Handle rate limiting
+        if (response.status === 429) {
+          if (isMountedRef.current) {
+            setRateLimited(true);
+            setLoadingSuggestions(false);
+            setSuggestions([]);
+            setShowSuggestions(false);
+            message.warning('Too many requests. Please wait a moment before searching again.', 3);
+          }
+          return;
+        }
         
         if (response.ok && isMountedRef.current) {
           const data = await response.json();
@@ -91,6 +110,7 @@ export default function Home() {
           if (isMountedRef.current) {
             setSuggestions(items);
             setLoadingSuggestions(false);
+            setRateLimited(false);
             if (items.length > 0) {
               setShowSuggestions(true);
             }
@@ -98,16 +118,19 @@ export default function Home() {
         } else {
           if (isMountedRef.current) {
             setLoadingSuggestions(false);
+            setSuggestions([]);
           }
         }
       } catch (error: any) {
         if (error.name !== 'AbortError' && isMountedRef.current) {
           setLoadingSuggestions(false);
+          setSuggestions([]);
         }
       }
     };
 
-    const debounceTimer = setTimeout(fetchSuggestions, 300);
+    // Increased debounce to 600ms to reduce API calls
+    const debounceTimer = setTimeout(fetchSuggestions, 600);
     return () => {
       clearTimeout(debounceTimer);
       suggestionsAbortRef.current?.abort();
@@ -138,6 +161,7 @@ export default function Home() {
     setShowSuggestions(false);
     setLoading(true);
     setSearched(true);
+    setRateLimited(false);
     
     // Create new abort controller for this search
     abortControllerRef.current = new AbortController();
@@ -148,22 +172,43 @@ export default function Home() {
       if (userPackages.length === 0) {
         message.info('No packages found');
         setPackages([]);
+        setAllPackages([]);
         setLoading(false);
         return;
       }
       
-      // Fetch stats with delay to avoid rate limiting
+      // Store all packages
+      setAllPackages(userPackages);
+      
+      // Load first 10 packages with stats
+      const INITIAL_LOAD = 10;
+      const initialPackages = userPackages.slice(0, INITIAL_LOAD);
       const packagesWithStats: PackageData[] = [];
-      for (let i = 0; i < userPackages.length; i++) {
+      
+      for (let i = 0; i < initialPackages.length; i++) {
         if (abortControllerRef.current?.signal.aborted) return;
         
-        const pkg = userPackages[i];
-        const stats = await fetchPackageStats(pkg.name);
-        packagesWithStats.push({ ...pkg, stats });
+        const pkg = initialPackages[i];
         
-        // Add small delay between requests
-        if (i < userPackages.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, 100));
+        try {
+          const stats = await fetchPackageStats(pkg.name);
+          packagesWithStats.push({ ...pkg, stats });
+        } catch (error: any) {
+          // If rate limited, show message and add with zero stats
+          if (error.message?.includes('429')) {
+            message.warning('Rate limit reached. Please wait a moment.', 3);
+            setRateLimited(true);
+            packagesWithStats.push({ 
+              ...pkg, 
+              stats: { daily: 0, weekly: 0, monthly: 0, allTime: 0, downloads: [] }
+            });
+          } else {
+            // For other errors, continue with zero stats
+            packagesWithStats.push({ 
+              ...pkg, 
+              stats: { daily: 0, weekly: 0, monthly: 0, allTime: 0, downloads: [] }
+            });
+          }
         }
       }
 
@@ -171,13 +216,24 @@ export default function Home() {
         setPackages(packagesWithStats);
         setSuggestions([]);
         setShowSuggestions(false);
-        message.success(`Loaded ${packagesWithStats.length} package${packagesWithStats.length > 1 ? 's' : ''}`);
+        
+        if (userPackages.length > INITIAL_LOAD) {
+          message.success(`Loaded ${packagesWithStats.length} of ${userPackages.length} packages. Click "Load More" to see more.`, 4);
+        } else {
+          message.success(`Loaded ${packagesWithStats.length} package${packagesWithStats.length > 1 ? 's' : ''}`);
+        }
         setLoading(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       if (isMountedRef.current) {
-        message.error('Failed to fetch package data');
+        if (error.message?.includes('429')) {
+          message.error('Rate limit reached. Please wait 30 seconds and try again.', 6);
+          setRateLimited(true);
+        } else {
+          message.error('Failed to fetch package data');
+        }
         setPackages([]);
+        setAllPackages([]);
         setLoading(false);
       }
     }
@@ -195,20 +251,113 @@ export default function Home() {
   const handleCancelSearch = () => {
     abortControllerRef.current?.abort();
     setLoading(false);
+    setLoadingMore(false);
     message.info('Search cancelled');
   };
 
   const handleReset = () => {
     setUsername('');
     setPackages([]);
+    setAllPackages([]);
     setSearched(false);
     setLoading(false);
+    setLoadingMore(false);
     setSuggestions([]);
     setShowSuggestions(false);
+    setRateLimited(false);
   };
+
+  const handleLoadMore = useCallback(async () => {
+    if (loadingMore || packages.length >= allPackages.length) return;
+    
+    setLoadingMore(true);
+    setRateLimited(false);
+    
+    const BATCH_SIZE = 10;
+    const currentCount = packages.length;
+    const nextBatch = allPackages.slice(currentCount, currentCount + BATCH_SIZE);
+    const newPackagesWithStats: PackageData[] = [];
+    
+    for (let i = 0; i < nextBatch.length; i++) {
+      const pkg = nextBatch[i];
+      
+      try {
+        const stats = await fetchPackageStats(pkg.name);
+        newPackagesWithStats.push({ ...pkg, stats });
+      } catch (error: any) {
+        if (error.message?.includes('429')) {
+          message.warning('Rate limit reached. Please wait a moment before loading more.', 3);
+          setRateLimited(true);
+          newPackagesWithStats.push({ 
+            ...pkg, 
+            stats: { daily: 0, weekly: 0, monthly: 0, allTime: 0, downloads: [] }
+          });
+        } else {
+          newPackagesWithStats.push({ 
+            ...pkg, 
+            stats: { daily: 0, weekly: 0, monthly: 0, allTime: 0, downloads: [] }
+          });
+        }
+      }
+    }
+    
+    if (isMountedRef.current) {
+      setPackages([...packages, ...newPackagesWithStats]);
+      setLoadingMore(false);
+      
+      const remaining = allPackages.length - (currentCount + newPackagesWithStats.length);
+      if (remaining > 0) {
+        message.success(`Loaded ${newPackagesWithStats.length} more packages. ${remaining} remaining.`, 2);
+      } else {
+        message.success(`All ${packages.length + newPackagesWithStats.length} packages loaded!`, 2);
+      }
+    }
+  }, [loadingMore, packages, allPackages]);
 
   return (
     <main className="h-screen bg-primary text-primary overflow-hidden flex flex-col">
+      {/* Structured Data for AI/SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "PackFolio",
+            "applicationCategory": "DeveloperApplication",
+            "operatingSystem": "Web Browser",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "description": "Free npm package analytics dashboard. Track download statistics, trends, and compare packages. Search by username or package name to view daily, weekly, monthly, and all-time download metrics with interactive charts.",
+            "url": "https://packfolio.vercel.app",
+            "featureList": [
+              "npm package search by username or package name",
+              "Real-time download statistics (daily, weekly, monthly, all-time)",
+              "Interactive trend charts with multiple time ranges",
+              "Package comparison across multiple packages",
+              "Download distribution visualization",
+              "Light and dark theme support",
+              "Mobile-responsive design",
+              "Free to use with no registration required"
+            ],
+            "screenshot": "https://packfolio.vercel.app/screenshot.png",
+            "softwareVersion": "1.0.0",
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "5",
+              "ratingCount": "1"
+            },
+            "author": {
+              "@type": "Organization",
+              "name": "PackFolio"
+            }
+          })
+        }}
+      />
+      
       {/* Header Bar */}
       <div className="border-b border-primary bg-elevated backdrop-blur-sm relative" style={{ zIndex: 100 }}>
         <div className="px-4 sm:px-6 py-3 sm:py-4">
@@ -290,13 +439,21 @@ export default function Home() {
                 onChange={(e) => setUsername(e.target.value)}
                 onPressEnter={handleSearch}
                 onFocus={() => {
-                  if (suggestions.length > 0 && !loading) {
+                  if (suggestions.length > 0 && !loading && !rateLimited) {
                     setShowSuggestions(true);
                   }
                 }}
                 onBlur={() => setTimeout(() => setShowSuggestions(false), 300)}
                 prefix={<SearchOutlined className="text-secondary" />}
-                suffix={loadingSuggestions && !loading && <div className="animate-spin rounded-full h-4 w-4 border-2 border-border-primary border-t-accent-primary" />}
+                suffix={
+                  rateLimited ? (
+                    <Tooltip title="Rate limited. Please wait.">
+                      <InfoCircleOutlined className="text-yellow-500" />
+                    </Tooltip>
+                  ) : (
+                    loadingSuggestions && !loading && <div className="animate-spin rounded-full h-4 w-4 border-2 border-border-primary border-t-accent-primary" />
+                  )
+                }
                 className="font-mono search-input"
                 disabled={loading}
               />
@@ -451,7 +608,12 @@ export default function Home() {
         {loading && <LoadingAnimation />}
 
         {!loading && searched && packages.length > 0 && (
-          <Dashboard packages={packages} />
+          <Dashboard 
+            packages={packages} 
+            onLoadMore={packages.length < allPackages.length ? handleLoadMore : undefined}
+            loadingMore={loadingMore}
+            remainingCount={allPackages.length - packages.length}
+          />
         )}
 
         {!loading && searched && packages.length === 0 && (

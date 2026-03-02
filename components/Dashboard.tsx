@@ -13,9 +13,12 @@ import ChartsPanel from './ChartsPanel';
 
 interface DashboardProps {
   packages: PackageData[];
+  onLoadMore?: () => void;
+  loadingMore?: boolean;
+  remainingCount?: number;
 }
 
-export default function Dashboard({ packages }: DashboardProps) {
+export default function Dashboard({ packages, onLoadMore, loadingMore, remainingCount }: DashboardProps) {
   const [selectedPackage, setSelectedPackage] = useState<PackageData>(packages[0]);
 
   return (
@@ -26,6 +29,9 @@ export default function Dashboard({ packages }: DashboardProps) {
           packages={packages} 
           selectedPackage={selectedPackage}
           onSelect={setSelectedPackage}
+          onLoadMore={onLoadMore}
+          loadingMore={loadingMore}
+          remainingCount={remainingCount}
         />
       </div>
 

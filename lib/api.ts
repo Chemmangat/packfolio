@@ -3,11 +3,17 @@
  * 
  * Functions to fetch package data from npm registry and downloads API.
  * All functions are documented and handle errors gracefully.
+ * Implements rate limiting to respect npm API limits.
  */
 
 import type { PackageStats, DailyDownload } from '@/types';
 import { config } from './config';
 import { getDateDaysAgo, getToday, isPackageName, cleanUsername, sum, average } from './utils';
+import { createNpmDownloadsRateLimiter, createNpmSearchRateLimiter } from './rateLimiter';
+
+// Create rate limiters (singleton instances)
+const downloadsRateLimiter = createNpmDownloadsRateLimiter();
+const searchRateLimiter = createNpmSearchRateLimiter();
 
 /**
  * Fetch all packages for a given username or a specific package
@@ -83,6 +89,9 @@ async function fetchDirectPackage(packageName: string) {
  * @returns Array of package objects
  */
 async function searchPackages(query: string, username: string) {
+  // Wait for rate limiter slot
+  await searchRateLimiter.waitForSlot();
+  
   const url = `${config.api.registrySearch}?text=${encodeURIComponent(query)}&size=${config.api.maxPackages}`;
   const response = await fetch(url);
   
@@ -122,38 +131,45 @@ async function searchPackages(query: string, username: string) {
 /**
  * Fetch download statistics for a package
  * 
- * Fetches:
- * - Daily average (last 7 days)
- * - Weekly downloads
- * - Monthly downloads
- * - All-time downloads
- * - Daily download history (last 365 days for charts)
+ * Optimized to use only ONE API call per package.
+ * Fetches 365 days of data and calculates all stats from that.
  * 
  * @param packageName - Full package name
  * @returns Package statistics object
+ * @throws Error if rate limited (429)
  */
 export async function fetchPackageStats(packageName: string): Promise<PackageStats> {
-  const today = getToday();
-  
   try {
-    // Fetch download history for charts (last 365 days to support all time ranges)
+    // Fetch 365 days of download history (ONE API CALL)
     const downloads = await fetchDownloadRange(packageName, 365);
     
-    // Calculate daily average from last 7 days
+    if (downloads.length === 0) {
+      return { daily: 0, weekly: 0, monthly: 0, allTime: 0, downloads: [] };
+    }
+    
+    // Calculate all stats from the downloaded data
+    const downloadCounts = downloads.map(d => d.downloads);
+    
+    // Daily average (last 7 days)
     const last7Downloads = downloads.slice(-7);
     const daily = average(last7Downloads.map(d => d.downloads));
 
-    // Fetch weekly downloads
-    const weekly = await fetchDownloadPoint(packageName, 'last-week');
+    // Weekly downloads (last 7 days)
+    const weekly = sum(last7Downloads.map(d => d.downloads));
 
-    // Fetch monthly downloads
-    const monthly = await fetchDownloadPoint(packageName, 'last-month');
+    // Monthly downloads (last 30 days)
+    const last30Downloads = downloads.slice(-30);
+    const monthly = sum(last30Downloads.map(d => d.downloads));
 
-    // Fetch all-time downloads
-    const allTime = await fetchAllTimeDownloads(packageName);
+    // All-time downloads (sum of all available data)
+    const allTime = sum(downloadCounts);
 
     return { daily, weekly, monthly, allTime, downloads };
-  } catch (error) {
+  } catch (error: any) {
+    // Re-throw rate limit errors
+    if (error.message?.includes('429')) {
+      throw error;
+    }
     return { daily: 0, weekly: 0, monthly: 0, allTime: 0, downloads: [] };
   }
 }
@@ -163,67 +179,35 @@ export async function fetchPackageStats(packageName: string): Promise<PackageSta
  * @param packageName - Package name
  * @param days - Number of days to fetch
  * @returns Array of daily download objects
+ * @throws Error if rate limited (429)
  */
 async function fetchDownloadRange(packageName: string, days: number): Promise<DailyDownload[]> {
+  // Wait for rate limiter slot
+  await downloadsRateLimiter.waitForSlot();
+  
   const startDate = getDateDaysAgo(days);
   const endDate = getToday();
   const url = `${config.api.downloadsApi}/range/${startDate}:${endDate}/${packageName}`;
   
   try {
     const response = await fetch(url);
+    
+    // Handle rate limiting
+    if (response.status === 429) {
+      // Reset rate limiter on 429
+      downloadsRateLimiter.reset();
+      throw new Error('Rate limit exceeded (429)');
+    }
+    
     if (!response.ok) return [];
     
     const data = await response.json();
     return data.downloads || [];
-  } catch (error) {
+  } catch (error: any) {
+    // Re-throw rate limit errors
+    if (error.message?.includes('429')) {
+      throw error;
+    }
     return [];
-  }
-}
-
-/**
- * Fetch download count for a specific time point
- * @param packageName - Package name
- * @param point - Time point (e.g., 'last-week', 'last-month')
- * @returns Download count
- */
-async function fetchDownloadPoint(packageName: string, point: string): Promise<number> {
-  const url = `${config.api.downloadsApi}/point/${point}/${packageName}`;
-  
-  try {
-    const response = await fetch(url);
-    
-    // Handle rate limiting
-    if (response.status === 429) {
-      return 0;
-    }
-    
-    if (!response.ok) {
-      return 0;
-    }
-    
-    const data = await response.json();
-    return data.downloads || 0;
-  } catch (error) {
-    return 0;
-  }
-}
-
-/**
- * Fetch all-time download count
- * @param packageName - Package name
- * @returns Total download count since 2010
- */
-async function fetchAllTimeDownloads(packageName: string): Promise<number> {
-  const url = `${config.api.downloadsApi}/range/${config.api.allTimeStartDate}:${getToday()}/${packageName}`;
-  
-  try {
-    const response = await fetch(url);
-    if (!response.ok) return 0;
-    
-    const data = await response.json();
-    const downloads = data.downloads || [];
-    return sum(downloads.map((d: DailyDownload) => d.downloads));
-  } catch (error) {
-    return 0;
   }
 }

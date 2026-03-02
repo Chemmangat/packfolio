@@ -8,6 +8,7 @@ import type { PackageData } from '@/types';
 import { formatNumber } from '@/lib/utils';
 import { config } from '@/lib/config';
 import { LinkOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 
 interface OverviewPanelProps {
   packages: PackageData[];
@@ -29,12 +30,16 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
 
   const StatBox = ({ label, value, color }: { label: string; value: number; color: string }) => (
     <div className="flex-1 px-3 sm:px-4 py-3 sm:py-4 border-r border-primary last:border-r-0 flex flex-col justify-center min-w-0">
-      <div className="text-[9px] sm:text-[10px] font-mono text-tertiary uppercase tracking-wider mb-2 sm:mb-2.5 whitespace-nowrap truncate">
-        {label}
-      </div>
-      <div className={`text-lg sm:text-2xl font-bold font-mono leading-none ${color} truncate`}>
-        {formatNumber(value)}
-      </div>
+      <Tooltip title={label}>
+        <div className="text-[9px] sm:text-[10px] font-mono text-tertiary uppercase tracking-wider mb-2 sm:mb-2.5 whitespace-nowrap truncate">
+          {label}
+        </div>
+      </Tooltip>
+      <Tooltip title={formatNumber(value)}>
+        <div className={`text-lg sm:text-2xl font-bold font-mono leading-none ${color} truncate`}>
+          {formatNumber(value)}
+        </div>
+      </Tooltip>
     </div>
   );
 
@@ -45,14 +50,16 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-2">
-              <h2 className="text-2xl font-bold font-mono text-primary truncate">
-                {selectedPackage.name}
-              </h2>
+              <Tooltip title={selectedPackage.name}>
+                <h2 className="text-2xl font-bold font-mono text-primary truncate">
+                  {selectedPackage.name}
+                </h2>
+              </Tooltip>
               <a
                 href={`https://www.npmjs.com/package/${selectedPackage.name}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-shrink-0 px-3 py-1.5 bg-accent-primary hover:bg-accent-secondary text-white rounded font-mono text-xs transition-colors flex items-center gap-2"
+                className="flex-shrink-0 px-3 py-1.5 bg-accent-primary hover:bg-accent-secondary text-white rounded font-mono text-xs transition-colors flex items-center gap-2 cursor-pointer"
                 title="View on npm"
               >
                 <LinkOutlined />
@@ -60,15 +67,19 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
               </a>
             </div>
             {config.features.showDescriptions && (
-              <p className="text-sm text-secondary leading-relaxed">
-                {selectedPackage.description}
-              </p>
+              <Tooltip title={selectedPackage.description}>
+                <p className="text-sm text-secondary leading-relaxed line-clamp-2">
+                  {selectedPackage.description}
+                </p>
+              </Tooltip>
             )}
           </div>
           {config.features.showVersions && (
-            <div className="flex-shrink-0 px-4 py-2 bg-card border border-primary rounded font-mono text-sm text-secondary">
-              v{selectedPackage.version}
-            </div>
+            <Tooltip title={`Version ${selectedPackage.version}`}>
+              <div className="flex-shrink-0 px-4 py-2 bg-card border border-primary rounded font-mono text-sm text-secondary">
+                v{selectedPackage.version}
+              </div>
+            </Tooltip>
           )}
         </div>
       </div>
