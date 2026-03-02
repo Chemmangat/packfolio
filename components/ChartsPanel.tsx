@@ -103,8 +103,8 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
       key: 'trend',
       label: <span className="font-mono text-xs">TREND</span>,
       children: (
-        <div className="p-4 sm:p-6 bg-card min-h-[500px]">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <div className="h-full p-4 sm:p-6 bg-card flex flex-col">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 flex-shrink-0">
             <div>
               <h3 className="text-sm font-mono text-primary uppercase tracking-wider font-semibold">
                 Download Trend
@@ -115,7 +115,7 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
             </div>
             <TimeRangeButtons />
           </div>
-          <div className="h-80 sm:h-96">
+          <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData} margin={{ left: -20, right: 10, top: 5, bottom: 5 }}>
                 <defs>
@@ -172,8 +172,8 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
       key: 'comparison',
       label: <span className="font-mono text-xs">COMPARISON</span>,
       children: (
-        <div className="p-4 sm:p-6 bg-card min-h-[500px]">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <div className="h-full p-4 sm:p-6 bg-card flex flex-col">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 flex-shrink-0">
             <div>
               <h3 className="text-sm font-mono text-primary uppercase tracking-wider font-semibold">
                 Package Comparison
@@ -200,7 +200,7 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
             </div>
             <TimeRangeButtons />
           </div>
-          <div className="h-80 sm:h-96">
+          <div className="flex-1 min-h-0">
             {allPackages.length > 1 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={comparisonData} margin={{ left: -20, right: 10, top: 5, bottom: 5 }}>
@@ -279,8 +279,8 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
       key: 'distribution',
       label: <span className="font-mono text-xs">DISTRIBUTION</span>,
       children: (
-        <div className="p-4 sm:p-6 bg-card min-h-[500px]">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <div className="h-full p-4 sm:p-6 bg-card flex flex-col">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 flex-shrink-0">
             <div>
               <h3 className="text-sm font-mono text-primary uppercase tracking-wider font-semibold">
                 Total Downloads Distribution
@@ -293,7 +293,7 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
               </p>
             </div>
           </div>
-          <div className="h-80 sm:h-96">
+          <div className="flex-1 min-h-0">
             {allPackages.length > 1 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart 

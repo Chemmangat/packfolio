@@ -43,7 +43,7 @@ export default function Dashboard({ packages, onLoadMore, loadingMore, remaining
         </div>
 
         {/* Charts and Details */}
-        <div className="flex-1 lg:overflow-hidden">
+        <div className="flex-1 min-h-0">
           <ChartsPanel package={selectedPackage} allPackages={packages} />
         </div>
       </div>
