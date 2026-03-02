@@ -249,6 +249,99 @@ a,
   box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2) !important;
 }
 
+/* Modal Styles */
+.legal-modal .ant-modal-content {
+  background-color: var(--bg-card) !important;
+  border: 1px solid var(--border-primary) !important;
+}
+
+.legal-modal .ant-modal-header {
+  background-color: var(--bg-elevated) !important;
+  border-bottom: 1px solid var(--border-primary) !important;
+}
+
+.legal-modal .ant-modal-title {
+  color: var(--text-primary) !important;
+}
+
+.legal-modal .ant-modal-close {
+  color: var(--text-secondary) !important;
+}
+
+.legal-modal .ant-modal-close:hover {
+  color: var(--text-primary) !important;
+  background-color: var(--bg-secondary) !important;
+}
+
+.legal-modal .ant-modal-body {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Professional Legal Modal - Always White */
+.legal-modal-professional .ant-modal-content {
+  background-color: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+}
+
+.legal-modal-professional .ant-modal-header {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  padding: 20px 24px !important;
+}
+
+.legal-modal-professional .ant-modal-title {
+  color: #111827 !important;
+  font-weight: 600 !important;
+}
+
+.legal-modal-professional .ant-modal-close {
+  color: #6b7280 !important;
+  top: 20px !important;
+  right: 20px !important;
+}
+
+.legal-modal-professional .ant-modal-close:hover {
+  color: #111827 !important;
+  background-color: #f3f4f6 !important;
+}
+
+.legal-modal-professional .ant-modal-body {
+  background-color: #ffffff !important;
+  color: #111827 !important;
+  padding: 24px !important;
+}
+
+.legal-modal-professional .ant-modal-mask {
+  background-color: rgba(0, 0, 0, 0.45) !important;
+}
+
+/* Force white background on all modal parts with higher specificity */
+.ant-modal-root .legal-modal-professional .ant-modal-content,
+.ant-modal-root .legal-modal-professional .ant-modal-header,
+.ant-modal-root .legal-modal-professional .ant-modal-body {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+.ant-modal-root .legal-modal-professional .ant-modal-title {
+  color: #111827 !important;
+}
+
+/* Override any dark theme styles */
+[data-theme="dark"] .legal-modal-professional .ant-modal-content,
+[data-theme="dark"] .legal-modal-professional .ant-modal-header,
+[data-theme="dark"] .legal-modal-professional .ant-modal-body {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+}
+
+[data-theme="dark"] .legal-modal-professional .ant-modal-title {
+  color: #111827 !important;
+}
+
 .registry-selector .ant-segmented-item:hover:not(.ant-segmented-item-selected):not(.ant-segmented-item-disabled) {
   color: var(--text-primary) !important;
 }
