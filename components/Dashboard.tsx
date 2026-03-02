@@ -22,9 +22,9 @@ export default function Dashboard({ packages, onLoadMore, loadingMore, remaining
   const [selectedPackage, setSelectedPackage] = useState<PackageData>(packages[0]);
 
   return (
-    <div className="h-full flex flex-col lg:flex-row">
+    <div className="h-full flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden">
       {/* Left Sidebar - Package List (collapsible on mobile) */}
-      <div className="w-full lg:w-80 border-b lg:border-b-0 lg:border-r border-primary bg-elevated overflow-y-auto max-h-48 lg:max-h-full flex-shrink-0">
+      <div className="w-full lg:w-80 border-b lg:border-b-0 lg:border-r border-primary bg-elevated lg:overflow-y-auto max-h-48 lg:max-h-full flex-shrink-0">
         <PackageList 
           packages={packages} 
           selectedPackage={selectedPackage}
@@ -36,7 +36,7 @@ export default function Dashboard({ packages, onLoadMore, loadingMore, remaining
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-y-auto lg:overflow-hidden min-h-0">
+      <div className="flex-1 flex flex-col lg:overflow-hidden min-h-0">
         {/* Overview Stats */}
         <div className="border-b border-primary bg-secondary flex-shrink-0">
           <OverviewPanel packages={packages} selectedPackage={selectedPackage} />

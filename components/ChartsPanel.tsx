@@ -115,7 +115,7 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
             </div>
             <TimeRangeButtons />
           </div>
-          <div className="flex-1 min-h-0">
+          <div className="flex-1 min-h-0 h-[300px] lg:h-auto">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData} margin={{ left: -20, right: 10, top: 5, bottom: 5 }}>
                 <defs>
@@ -200,7 +200,7 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
             </div>
             <TimeRangeButtons />
           </div>
-          <div className="flex-1 min-h-0">
+          <div className="flex-1 min-h-0 h-[300px] lg:h-auto">
             {allPackages.length > 1 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={comparisonData} margin={{ left: -20, right: 10, top: 5, bottom: 5 }}>
@@ -293,7 +293,7 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
               </p>
             </div>
           </div>
-          <div className="flex-1 min-h-0">
+          <div className="flex-1 min-h-0 h-[400px] lg:h-auto">
             {allPackages.length > 1 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart 
@@ -360,7 +360,7 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
   ];
 
   return (
-    <div className="h-full bg-card overflow-y-auto lg:overflow-hidden">
+    <div className="h-full bg-card lg:overflow-hidden">
       <Tabs
         items={tabItems}
         className="h-full charts-tabs"
