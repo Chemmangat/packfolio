@@ -76,7 +76,7 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
   const colors = chartColors;
 
   const TimeRangeButtons = () => (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2">
       {[
         { label: '7D', value: '7' },
         { label: '30D', value: '30' },
@@ -86,7 +86,7 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
         <button
           key={option.value}
           onClick={() => setTimeRange(option.value as TimeRange)}
-          className={`px-4 py-1.5 text-xs font-mono rounded border transition-all cursor-pointer ${
+          className={`px-3 sm:px-4 py-1.5 text-xs font-mono rounded border transition-all cursor-pointer ${
             timeRange === option.value
               ? 'bg-accent-primary border-accent-primary text-white shadow-lg'
               : 'bg-elevated border-primary text-secondary hover:border-secondary hover:text-primary'
@@ -103,8 +103,8 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
       key: 'trend',
       label: <span className="font-mono text-xs">TREND</span>,
       children: (
-        <div className="h-full p-6 bg-card">
-          <div className="flex items-center justify-between mb-4">
+        <div className="h-full p-4 sm:p-6 bg-card">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <div>
               <h3 className="text-sm font-mono text-primary uppercase tracking-wider font-semibold">
                 Download Trend
@@ -115,9 +115,9 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
             </div>
             <TimeRangeButtons />
           </div>
-          <div className="h-[calc(100%-4rem)]">
+          <div className="h-[calc(100%-5rem)] sm:h-[calc(100%-4rem)]">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData}>
+              <AreaChart data={chartData} margin={{ left: -20, right: 10, top: 5, bottom: 5 }}>
                 <defs>
                   <linearGradient id="colorDownloads" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#ef4444" stopOpacity={0.2}/>
@@ -127,13 +127,17 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" opacity={0.5} />
                 <XAxis
                   dataKey="day"
-                  tick={{ fill: 'var(--chart-axis)', fontSize: 11, fontFamily: 'monospace' }}
+                  tick={{ fill: 'var(--chart-axis)', fontSize: 10, fontFamily: 'monospace' }}
                   tickFormatter={formatXAxisDate}
                   stroke="var(--border-primary)"
+                  angle={-45}
+                  textAnchor="end"
+                  height={60}
                 />
                 <YAxis 
-                  tick={{ fill: 'var(--chart-axis)', fontSize: 11, fontFamily: 'monospace' }}
+                  tick={{ fill: 'var(--chart-axis)', fontSize: 10, fontFamily: 'monospace' }}
                   stroke="var(--border-primary)"
+                  width={50}
                 />
                 <Tooltip
                   position={{ y: 0 }}
@@ -168,8 +172,8 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
       key: 'comparison',
       label: <span className="font-mono text-xs">COMPARISON</span>,
       children: (
-        <div className="h-full p-6 bg-card">
-          <div className="flex items-center justify-between mb-4">
+        <div className="h-full p-4 sm:p-6 bg-card">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <div>
               <h3 className="text-sm font-mono text-primary uppercase tracking-wider font-semibold">
                 Package Comparison
@@ -196,20 +200,24 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
             </div>
             <TimeRangeButtons />
           </div>
-          <div className="h-[calc(100%-4rem)]">
+          <div className="h-[calc(100%-5rem)] sm:h-[calc(100%-4rem)]">
             {allPackages.length > 1 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={comparisonData}>
+                <LineChart data={comparisonData} margin={{ left: -20, right: 10, top: 5, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" opacity={0.5} />
                   <XAxis
                     dataKey="day"
-                    tick={{ fill: 'var(--chart-axis)', fontSize: 11, fontFamily: 'monospace' }}
+                    tick={{ fill: 'var(--chart-axis)', fontSize: 10, fontFamily: 'monospace' }}
                     tickFormatter={formatXAxisDate}
                     stroke="var(--border-primary)"
+                    angle={-45}
+                    textAnchor="end"
+                    height={60}
                   />
                   <YAxis 
-                    tick={{ fill: 'var(--chart-axis)', fontSize: 11, fontFamily: 'monospace' }}
+                    tick={{ fill: 'var(--chart-axis)', fontSize: 10, fontFamily: 'monospace' }}
                     stroke="var(--border-primary)"
+                    width={50}
                   />
                   <Tooltip
                     position={{ y: 0 }}
@@ -231,7 +239,7 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
                   <Legend 
                     wrapperStyle={{ 
                       fontFamily: 'monospace', 
-                      fontSize: '11px',
+                      fontSize: '10px',
                       color: 'var(--text-secondary)',
                       maxHeight: '80px',
                       overflowY: 'auto'
@@ -271,8 +279,8 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
       key: 'distribution',
       label: <span className="font-mono text-xs">DISTRIBUTION</span>,
       children: (
-        <div className="h-full p-6 bg-card">
-          <div className="flex items-center justify-between mb-4">
+        <div className="h-full p-4 sm:p-6 bg-card">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <div>
               <h3 className="text-sm font-mono text-primary uppercase tracking-wider font-semibold">
                 Total Downloads Distribution
@@ -291,12 +299,12 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
                 <BarChart 
                   data={distributionData}
                   layout="vertical"
-                  margin={{ left: 10, right: 20 }}
+                  margin={{ left: 0, right: 10, top: 5, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" opacity={0.5} />
                   <XAxis 
                     type="number"
-                    tick={{ fill: 'var(--chart-axis)', fontSize: 11, fontFamily: 'monospace' }}
+                    tick={{ fill: 'var(--chart-axis)', fontSize: 10, fontFamily: 'monospace' }}
                     stroke="var(--border-primary)"
                     tickFormatter={(value) => {
                       if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
@@ -307,9 +315,9 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
                   <YAxis 
                     type="category"
                     dataKey="name"
-                    tick={{ fill: 'var(--chart-axis)', fontSize: 10, fontFamily: 'monospace' }}
+                    tick={{ fill: 'var(--chart-axis)', fontSize: 9, fontFamily: 'monospace' }}
                     stroke="var(--border-primary)"
-                    width={140}
+                    width={100}
                   />
                   <Tooltip
                     position={{ x: 0 }}

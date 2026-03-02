@@ -7,14 +7,54 @@
 import type { Metadata } from "next";
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { ThemeProvider } from '@/contexts/ThemeContext';
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { config } from '@/lib/config';
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "PackFolio",
-  description: "Technical npm package analytics dashboard - Track download statistics and trends for npm packages",
+  title: "PackFolio - npm Package Analytics Dashboard",
+  description: "Free npm package analytics dashboard. Track download statistics, trends, and compare packages. Search by username or package name to view daily, weekly, monthly, and all-time download metrics with interactive charts.",
+  keywords: [
+    "npm analytics",
+    "package statistics",
+    "npm downloads",
+    "package metrics",
+    "npm dashboard",
+    "package analytics",
+    "npm trends",
+    "download statistics",
+    "package comparison",
+    "npm package tracker"
+  ],
+  authors: [{ name: "PackFolio" }],
+  creator: "PackFolio",
+  publisher: "PackFolio",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    title: "PackFolio - npm Package Analytics Dashboard",
+    description: "Free npm package analytics dashboard. Track download statistics, trends, and compare packages with interactive charts.",
+    siteName: "PackFolio",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PackFolio - npm Package Analytics Dashboard",
+    description: "Free npm package analytics dashboard. Track download statistics, trends, and compare packages.",
+  },
+  applicationName: "PackFolio",
+  category: "Developer Tools",
 };
 
 export default function RootLayout({
@@ -24,6 +64,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="canonical" href="https://packfolio.vercel.app" />
+      </head>
       <body>
         <ThemeProvider>
           <AntdRegistry>{children}</AntdRegistry>
