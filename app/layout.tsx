@@ -44,6 +44,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
+    url: "https://packfolio.vercel.app",
     title: "PackFolio - npm Package Analytics Dashboard",
     description: "Free npm package analytics dashboard. Track download statistics, trends, and compare packages with interactive charts.",
     siteName: "PackFolio",
@@ -55,6 +56,9 @@ export const metadata: Metadata = {
   },
   applicationName: "PackFolio",
   category: "Developer Tools",
+  alternates: {
+    canonical: "https://packfolio.vercel.app",
+  },
 };
 
 export default function RootLayout({
