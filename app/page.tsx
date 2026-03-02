@@ -382,6 +382,14 @@ export default function Home() {
               
               <Button
                 size="large"
+                onClick={() => window.open('/about', '_blank')}
+                icon={<InfoCircleOutlined />}
+                className="theme-toggle"
+                title="About PackFolio"
+              />
+              
+              <Button
+                size="large"
                 onClick={() => setShowContributeModal(true)}
                 icon={<HeartOutlined />}
                 className="theme-toggle"
@@ -525,6 +533,14 @@ export default function Home() {
               
               <Button
                 size="large"
+                onClick={() => window.open('/about', '_blank')}
+                icon={<InfoCircleOutlined />}
+                className="theme-toggle"
+                title="About PackFolio"
+              />
+              
+              <Button
+                size="large"
                 onClick={() => setShowContributeModal(true)}
                 icon={<HeartOutlined />}
                 className="theme-toggle"
@@ -547,11 +563,83 @@ export default function Home() {
       {/* Main Content */}
       <div className="flex-1 overflow-hidden">
         {!searched && !loading && (
-          <div className="h-full flex items-center justify-center bg-primary">
-            <div className="text-center max-w-2xl px-6">
+          <div className="h-full flex items-center justify-center bg-primary relative overflow-hidden">
+            {/* Animated Gradient Orbs - Luxury Glow Effect */}
+            <div className="absolute inset-0 overflow-hidden">
+              {/* Primary Glow - Deep Blue (Largest) */}
+              <div 
+                className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full blur-3xl opacity-25 animate-pulse"
+                style={{
+                  background: 'radial-gradient(circle, rgba(30, 58, 138, 0.7) 0%, rgba(30, 58, 138, 0) 70%)',
+                  animation: 'float 8s ease-in-out infinite',
+                  animationDelay: '0s'
+                }}
+              />
+              
+              {/* Secondary Glow - Cyan Blue */}
+              <div 
+                className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-3xl opacity-20 animate-pulse"
+                style={{
+                  background: 'radial-gradient(circle, rgba(6, 182, 212, 0.6) 0%, rgba(6, 182, 212, 0) 70%)',
+                  animation: 'float 10s ease-in-out infinite',
+                  animationDelay: '2s'
+                }}
+              />
+              
+              {/* Tertiary Glow - Dark Red (Accent) */}
+              <div 
+                className="absolute top-1/2 right-1/3 w-64 h-64 rounded-full blur-3xl opacity-12 animate-pulse"
+                style={{
+                  background: 'radial-gradient(circle, rgba(139, 0, 0, 0.5) 0%, rgba(139, 0, 0, 0) 70%)',
+                  animation: 'float 12s ease-in-out infinite',
+                  animationDelay: '4s'
+                }}
+              />
+            </div>
+            
+            {/* Subtle Tech Background */}
+            <div className="absolute inset-0 opacity-[0.03]">
+              {/* Grid Pattern */}
+              <div className="absolute inset-0" style={{
+                backgroundImage: `
+                  linear-gradient(var(--border-primary) 1px, transparent 1px),
+                  linear-gradient(90deg, var(--border-primary) 1px, transparent 1px)
+                `,
+                backgroundSize: '50px 50px'
+              }} />
+              
+              {/* Floating Code Snippets */}
+              <div className="absolute top-10 left-10 font-mono text-xs text-secondary opacity-30">
+                npm install
+              </div>
+              <div className="absolute top-32 right-20 font-mono text-xs text-secondary opacity-30">
+                package.json
+              </div>
+              <div className="absolute bottom-40 left-32 font-mono text-xs text-secondary opacity-30">
+                {"{ downloads: 1M }"}
+              </div>
+              <div className="absolute bottom-20 right-40 font-mono text-xs text-secondary opacity-30">
+                npm publish
+              </div>
+              <div className="absolute top-1/2 left-1/4 font-mono text-xs text-secondary opacity-30">
+                @scope/package
+              </div>
+              <div className="absolute top-1/3 right-1/3 font-mono text-xs text-secondary opacity-30">
+                {"const stats = {}"}
+              </div>
+            </div>
+            
+            <div className="text-center max-w-2xl px-6 relative z-10">
               {/* Animated Terminal Icon */}
               <div className="relative inline-flex items-center justify-center mb-8">
-                <div className="absolute inset-0 bg-accent-primary opacity-10 rounded-2xl blur-3xl scale-150"></div>
+                {/* Pulsing Glow Ring */}
+                <div className="absolute inset-0 bg-accent-primary opacity-10 rounded-2xl blur-3xl scale-150 animate-pulse"></div>
+                <div 
+                  className="absolute inset-0 bg-accent-primary rounded-2xl blur-2xl"
+                  style={{
+                    animation: 'breathe 4s ease-in-out infinite'
+                  }}
+                ></div>
                 
                 <div className="relative bg-card border border-primary rounded-xl p-6 shadow-2xl w-64">
                   <div className="flex items-center gap-2 mb-4 pb-3 border-b border-primary">
@@ -601,6 +689,19 @@ export default function Home() {
                   </code>
                 </div>
               </div>
+            </div>
+            
+            {/* Maintainer Credit */}
+            <div className="absolute bottom-6 left-0 right-0 flex justify-center">
+              <a 
+                href="https://chemmangathari.in" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-xs text-tertiary hover:text-secondary font-mono transition-colors flex items-center gap-2"
+              >
+                <span>Maintained by</span>
+                <span className="text-accent-primary hover:underline">chemmangathari.in</span>
+              </a>
             </div>
           </div>
         )}
