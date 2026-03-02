@@ -9,10 +9,11 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Input, Button, message, Segmented, Tooltip } from 'antd';
-import { SearchOutlined, SunOutlined, MoonOutlined, InfoCircleOutlined, CloseOutlined, CloseCircleOutlined, HeartOutlined } from '@ant-design/icons';
+import { SearchOutlined, SunOutlined, MoonOutlined, InfoCircleOutlined, CloseOutlined, CloseCircleOutlined, HeartOutlined, FileTextOutlined } from '@ant-design/icons';
 import Dashboard from '@/components/Dashboard';
 import LoadingAnimation from '@/components/LoadingAnimation';
 import ContributeModal from '@/components/ContributeModal';
+import LegalModal from '@/components/LegalModal';
 import { fetchUserPackages, fetchPackageStats } from '@/lib/api';
 import { useTheme } from '@/contexts/ThemeContext';
 import { config } from '@/lib/config';
@@ -38,6 +39,7 @@ export default function Home() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [showContributeModal, setShowContributeModal] = useState(false);
+  const [showLegalModal, setShowLegalModal] = useState(false);
   const [rateLimited, setRateLimited] = useState(false);
   const { theme, toggleTheme } = useTheme();
   
@@ -390,6 +392,14 @@ export default function Home() {
               
               <Button
                 size="large"
+                onClick={() => setShowLegalModal(true)}
+                icon={<FileTextOutlined />}
+                className="theme-toggle"
+                title="Legal & API Info"
+              />
+              
+              <Button
+                size="large"
                 onClick={() => setShowContributeModal(true)}
                 icon={<HeartOutlined />}
                 className="theme-toggle"
@@ -537,6 +547,14 @@ export default function Home() {
                 icon={<InfoCircleOutlined />}
                 className="theme-toggle"
                 title="About PackFolio"
+              />
+              
+              <Button
+                size="large"
+                onClick={() => setShowLegalModal(true)}
+                icon={<FileTextOutlined />}
+                className="theme-toggle"
+                title="Legal & API Info"
               />
               
               <Button
@@ -732,6 +750,12 @@ export default function Home() {
       <ContributeModal 
         open={showContributeModal} 
         onClose={() => setShowContributeModal(false)} 
+      />
+      
+      {/* Legal Modal */}
+      <LegalModal 
+        open={showLegalModal} 
+        onClose={() => setShowLegalModal(false)} 
       />
     </main>
   );
