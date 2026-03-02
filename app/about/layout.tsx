@@ -24,7 +24,7 @@ export default function AboutLayout({
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="canonical" href="https://packfolio.vercel.app/about" />
+        <link rel="canonical" href="https://www.packfolio.dev/about" />
       </head>
       <body style={{ margin: 0, padding: 0 }}>
         {children}

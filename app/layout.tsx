@@ -5,11 +5,9 @@
  */
 
 import type { Metadata } from "next";
-import { AntdRegistry } from '@ant-design/nextjs-registry';
-import { ThemeProvider } from '@/contexts/ThemeContext';
+import { Providers } from './providers';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import { config } from '@/lib/config';
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -44,7 +42,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://packfolio.vercel.app",
+    url: "https://www.packfolio.dev",
     title: "PackFolio - npm Package Analytics Dashboard",
     description: "Free npm package analytics dashboard. Track download statistics, trends, and compare packages with interactive charts.",
     siteName: "PackFolio",
@@ -57,7 +55,7 @@ export const metadata: Metadata = {
   applicationName: "PackFolio",
   category: "Developer Tools",
   alternates: {
-    canonical: "https://packfolio.vercel.app",
+    canonical: "https://www.packfolio.dev",
   },
 };
 
@@ -70,12 +68,10 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="canonical" href="https://packfolio.vercel.app" />
+        <link rel="canonical" href="https://www.packfolio.dev" />
       </head>
       <body>
-        <ThemeProvider>
-          <AntdRegistry>{children}</AntdRegistry>
-        </ThemeProvider>
+        <Providers>{children}</Providers>
         <Analytics />
         <SpeedInsights />
       </body>

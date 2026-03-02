@@ -31,4 +31,4 @@ User-agent: Bytespider
 Allow: /
 
 # Sitemap
-Sitemap: https://packfolio.vercel.app/sitemap.xml
+Sitemap: https://www.packfolio.dev/sitemap.xml
