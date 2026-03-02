@@ -45,12 +45,22 @@ const structuredData = {
   "name": "About PackFolio",
   "description": "Free npm package analytics dashboard for tracking download statistics and trends.",
   "url": "https://www.packfolio.dev/about",
+  "author": {
+    "@type": "Person",
+    "name": "Hari C M",
+    "url": "https://chemmangathari.in"
+  },
   "isPartOf": {
     "@type": "WebApplication",
     "name": "PackFolio",
     "url": "https://www.packfolio.dev",
     "applicationCategory": "DeveloperApplication",
     "operatingSystem": "Web",
+    "author": {
+      "@type": "Person",
+      "name": "Hari C M",
+      "url": "https://chemmangathari.in"
+    },
     "offers": {
       "@type": "Offer",
       "price": "0",
@@ -342,11 +352,52 @@ export default function AboutPage() {
             </div>
           </section>
 
+          {/* About the Creator */}
+          <section style={{ marginBottom: '3rem' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', fontFamily: 'monospace' }}>
+              About the Creator
+            </h2>
+            <div style={{ backgroundColor: '#161616', border: '1px solid #2a2a2a', borderRadius: '0.5rem', padding: '1.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem', fontFamily: 'monospace', color: '#f5f5f5' }}>
+                    Hari C M
+                  </h3>
+                  <p style={{ fontSize: '0.875rem', color: '#a3a3a3', lineHeight: '1.75' }}>
+                    PackFolio was built by Hari C M, a developer passionate about creating tools that make developers' lives easier. 
+                    This project was born from the need to quickly evaluate npm packages without juggling multiple tabs and data sources.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', paddingTop: '0.5rem' }}>
+                  <a 
+                    href="https://chemmangathari.in" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    style={{ 
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      padding: '0.5rem 1rem',
+                      backgroundColor: '#ef4444',
+                      color: '#ffffff',
+                      borderRadius: '0.375rem',
+                      fontFamily: 'monospace',
+                      fontSize: '0.875rem',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    🌐 Visit Website
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* Footer */}
           <footer style={{ borderTop: '1px solid #2a2a2a', paddingTop: '2rem', marginTop: '3rem' }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
               <p style={{ fontSize: '0.875rem', color: '#737373', fontFamily: 'monospace' }}>
-                Built with ❤️ for the npm community
+                Built with ❤️ for the npm community by Hari C M
               </p>
               <div style={{ display: 'flex', gap: '1rem' }}>
                 <Link 
@@ -361,7 +412,7 @@ export default function AboutPage() {
                   rel="noopener noreferrer"
                   style={{ fontSize: '0.875rem', color: '#a3a3a3', fontFamily: 'monospace', textDecoration: 'none' }}
                 >
-                  Maintained by chemmangathari.in
+                  chemmangathari.in
                 </a>
               </div>
             </div>
