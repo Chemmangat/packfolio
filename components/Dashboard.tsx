@@ -24,7 +24,7 @@ export default function Dashboard({ packages, onLoadMore, loadingMore, remaining
   return (
     <div className="h-full flex flex-col lg:flex-row">
       {/* Left Sidebar - Package List (collapsible on mobile) */}
-      <div className="w-full lg:w-80 border-b lg:border-b-0 lg:border-r border-primary bg-elevated overflow-y-auto max-h-48 lg:max-h-full">
+      <div className="w-full lg:w-80 border-b lg:border-b-0 lg:border-r border-primary bg-elevated overflow-y-auto max-h-48 lg:max-h-full flex-shrink-0">
         <PackageList 
           packages={packages} 
           selectedPackage={selectedPackage}
@@ -36,14 +36,14 @@ export default function Dashboard({ packages, onLoadMore, loadingMore, remaining
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-y-auto lg:overflow-hidden min-h-0">
         {/* Overview Stats */}
-        <div className="border-b border-primary bg-secondary overflow-y-auto">
+        <div className="border-b border-primary bg-secondary flex-shrink-0">
           <OverviewPanel packages={packages} selectedPackage={selectedPackage} />
         </div>
 
         {/* Charts and Details */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 lg:overflow-hidden">
           <ChartsPanel package={selectedPackage} allPackages={packages} />
         </div>
       </div>
