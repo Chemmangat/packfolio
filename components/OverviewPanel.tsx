@@ -29,14 +29,14 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
   const hasMultiplePackages = packages.length > 1;
 
   const StatBox = ({ label, value, color }: { label: string; value: number; color: string }) => (
-    <div className="flex-1 px-3 sm:px-4 py-3 sm:py-4 border-r border-primary last:border-r-0 flex flex-col justify-center min-w-0">
+    <div className="flex-1 px-2 sm:px-3 py-2 sm:py-3 border-r border-primary last:border-r-0 flex flex-col justify-center min-w-0">
       <Tooltip title={label}>
-        <div className="text-[9px] sm:text-[10px] font-mono text-tertiary uppercase tracking-wider mb-2 sm:mb-2.5 whitespace-nowrap truncate">
+        <div className="text-[9px] sm:text-[10px] font-mono text-tertiary uppercase tracking-wider mb-1.5 sm:mb-2 whitespace-nowrap truncate">
           {label}
         </div>
       </Tooltip>
       <Tooltip title={formatNumber(value)}>
-        <div className={`text-lg sm:text-2xl font-bold font-mono leading-none ${color} truncate`}>
+        <div className={`text-base sm:text-xl font-bold font-mono leading-none ${color} truncate`}>
           {formatNumber(value)}
         </div>
       </Tooltip>
@@ -44,14 +44,14 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
   );
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-5">
       {/* Selected Package Info */}
-      <div className="mb-6">
+      <div className="mb-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-3 mb-1.5">
               <Tooltip title={selectedPackage.name}>
-                <h2 className="text-2xl font-bold font-mono text-primary truncate">
+                <h2 className="text-xl font-bold font-mono text-primary truncate">
                   {selectedPackage.name}
                 </h2>
               </Tooltip>
@@ -59,7 +59,7 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
                 href={`https://www.npmjs.com/package/${selectedPackage.name}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-shrink-0 px-3 py-1.5 bg-accent-primary hover:bg-accent-secondary text-white rounded font-mono text-xs transition-colors flex items-center gap-2 cursor-pointer"
+                className="flex-shrink-0 px-2.5 py-1 bg-accent-primary hover:bg-accent-secondary text-white rounded font-mono text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
                 title="View on npm"
               >
                 <LinkOutlined />
@@ -68,7 +68,7 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
             </div>
             {config.features.showDescriptions && (
               <Tooltip title={selectedPackage.description}>
-                <p className="text-sm text-secondary leading-relaxed line-clamp-2">
+                <p className="text-xs text-secondary leading-relaxed line-clamp-1">
                   {selectedPackage.description}
                 </p>
               </Tooltip>
@@ -76,7 +76,7 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
           </div>
           {config.features.showVersions && (
             <Tooltip title={`Version ${selectedPackage.version}`}>
-              <div className="flex-shrink-0 px-4 py-2 bg-card border border-primary rounded font-mono text-sm text-secondary">
+              <div className="flex-shrink-0 px-3 py-1.5 bg-card border border-primary rounded font-mono text-xs text-secondary">
                 v{selectedPackage.version}
               </div>
             </Tooltip>
@@ -85,15 +85,15 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
       </div>
 
       {/* Stats Grid */}
-      <div className={`grid grid-cols-1 ${hasMultiplePackages ? 'lg:grid-cols-2' : ''} gap-4 sm:gap-6`}>
+      <div className={`grid grid-cols-1 ${hasMultiplePackages ? 'lg:grid-cols-2' : ''} gap-3 sm:gap-4`}>
         {/* Current Package Stats */}
         <div className="bg-card border border-primary rounded-lg overflow-hidden shadow-sm">
-          <div className="px-4 py-3 bg-elevated border-b border-primary">
+          <div className="px-3 py-2 bg-elevated border-b border-primary">
             <div className="text-xs font-mono text-tertiary uppercase tracking-wider font-semibold">
               {hasMultiplePackages ? 'Current Package' : 'Download Statistics'}
             </div>
           </div>
-          <div className="flex h-24">
+          <div className="flex h-20">
             <StatBox label="Daily Avg" value={selectedPackage.stats.daily} color="text-accent-blue" />
             <StatBox label="Weekly" value={selectedPackage.stats.weekly} color="text-accent-cyan" />
             <StatBox label="Monthly" value={selectedPackage.stats.monthly} color="text-accent-purple" />
@@ -104,12 +104,12 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
         {/* Total Stats - Only show if multiple packages */}
         {hasMultiplePackages && (
           <div className="bg-card border border-primary rounded-lg overflow-hidden shadow-sm">
-            <div className="px-4 py-3 bg-elevated border-b border-primary">
+            <div className="px-3 py-2 bg-elevated border-b border-primary">
               <div className="text-xs font-mono text-tertiary uppercase tracking-wider font-semibold">
                 All Packages Combined
               </div>
             </div>
-            <div className="flex h-24">
+            <div className="flex h-20">
               <StatBox label="Daily Avg" value={totals.daily} color="text-accent-blue" />
               <StatBox label="Weekly" value={totals.weekly} color="text-accent-cyan" />
               <StatBox label="Monthly" value={totals.monthly} color="text-accent-purple" />
