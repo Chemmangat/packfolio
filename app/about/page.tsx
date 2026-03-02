@@ -2,7 +2,7 @@
  * About Page - Static content for SEO and AI crawlers
  * 
  * This page provides static HTML content that can be easily scraped
- * by AI tools and search engines.
+ * by AI tools and search engines. Fully server-side rendered.
  */
 
 import { Metadata } from 'next';
@@ -15,20 +15,31 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-primary text-primary">
-      <div className="max-w-4xl mx-auto px-6 py-12">
+    <html lang="en">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
+      <body className="min-h-screen bg-[#0a0a0a] text-[#f5f5f5]">
+        <main className="min-h-screen">
+          <div className="max-w-4xl mx-auto px-6 py-12">
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-4xl font-bold font-mono mb-4">
-            <span className="text-accent-primary">$</span> PackFolio
+          <h1 className="text-4xl font-bold font-mono mb-4" style={{ fontFamily: 'monospace' }}>
+            <span style={{ color: '#ef4444' }}>$</span> PackFolio
           </h1>
-          <p className="text-xl text-secondary">
+          <p className="text-xl" style={{ color: '#a3a3a3' }}>
             Free npm Package Analytics Dashboard
           </p>
           <div className="mt-6">
             <Link 
               href="/"
-              className="inline-block px-6 py-3 bg-accent-primary hover:bg-accent-secondary text-white rounded font-mono transition-colors"
+              className="inline-block px-6 py-3 rounded transition-colors"
+              style={{ 
+                backgroundColor: '#ef4444',
+                color: '#ffffff',
+                fontFamily: 'monospace',
+                textDecoration: 'none'
+              }}
             >
               Launch Dashboard →
             </Link>
@@ -37,14 +48,16 @@ export default function AboutPage() {
 
         {/* What is PackFolio */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold font-mono mb-4 text-primary">What is PackFolio?</h2>
+          <h2 className="text-2xl font-bold font-mono mb-4" style={{ fontFamily: 'monospace', color: '#f5f5f5' }}>
+            What is PackFolio?
+          </h2>
           <div className="prose prose-invert max-w-none">
-            <p className="text-secondary leading-relaxed mb-4">
+            <p className="leading-relaxed mb-4" style={{ color: '#a3a3a3' }}>
               PackFolio is a free, web-based analytics dashboard for npm packages. 
               It allows developers to track download statistics, analyze trends, and 
               compare packages without any registration or API keys required.
             </p>
-            <p className="text-secondary leading-relaxed">
+            <p className="leading-relaxed" style={{ color: '#a3a3a3' }}>
               Simply search by npm username or package name to view comprehensive 
               download metrics including daily averages, weekly totals, monthly totals, 
               and all-time statistics with interactive charts.
@@ -54,41 +67,55 @@ export default function AboutPage() {
 
         {/* Key Features */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold font-mono mb-4 text-primary">Key Features</h2>
+          <h2 className="text-2xl font-bold font-mono mb-4" style={{ fontFamily: 'monospace', color: '#f5f5f5' }}>
+            Key Features
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-card border border-primary rounded-lg p-6">
-              <h3 className="text-lg font-mono font-semibold mb-2 text-primary">🔍 Smart Search</h3>
-              <p className="text-sm text-secondary">
+            <div className="rounded-lg p-6" style={{ backgroundColor: '#161616', border: '1px solid #2a2a2a' }}>
+              <h3 className="text-lg font-mono font-semibold mb-2" style={{ fontFamily: 'monospace', color: '#f5f5f5' }}>
+                🔍 Smart Search
+              </h3>
+              <p className="text-sm" style={{ color: '#a3a3a3' }}>
                 Search by npm username or package name with autocomplete suggestions
               </p>
             </div>
-            <div className="bg-card border border-primary rounded-lg p-6">
-              <h3 className="text-lg font-mono font-semibold mb-2 text-primary">📊 Comprehensive Stats</h3>
-              <p className="text-sm text-secondary">
+            <div className="rounded-lg p-6" style={{ backgroundColor: '#161616', border: '1px solid #2a2a2a' }}>
+              <h3 className="text-lg font-mono font-semibold mb-2" style={{ fontFamily: 'monospace', color: '#f5f5f5' }}>
+                📊 Comprehensive Stats
+              </h3>
+              <p className="text-sm" style={{ color: '#a3a3a3' }}>
                 Daily, weekly, monthly, and all-time download metrics
               </p>
             </div>
-            <div className="bg-card border border-primary rounded-lg p-6">
-              <h3 className="text-lg font-mono font-semibold mb-2 text-primary">📈 Interactive Charts</h3>
-              <p className="text-sm text-secondary">
+            <div className="rounded-lg p-6" style={{ backgroundColor: '#161616', border: '1px solid #2a2a2a' }}>
+              <h3 className="text-lg font-mono font-semibold mb-2" style={{ fontFamily: 'monospace', color: '#f5f5f5' }}>
+                📈 Interactive Charts
+              </h3>
+              <p className="text-sm" style={{ color: '#a3a3a3' }}>
                 Trend analysis, package comparison, and distribution visualization
               </p>
             </div>
-            <div className="bg-card border border-primary rounded-lg p-6">
-              <h3 className="text-lg font-mono font-semibold mb-2 text-primary">🎨 Theme Support</h3>
-              <p className="text-sm text-secondary">
+            <div className="rounded-lg p-6" style={{ backgroundColor: '#161616', border: '1px solid #2a2a2a' }}>
+              <h3 className="text-lg font-mono font-semibold mb-2" style={{ fontFamily: 'monospace', color: '#f5f5f5' }}>
+                🎨 Theme Support
+              </h3>
+              <p className="text-sm" style={{ color: '#a3a3a3' }}>
                 Light and dark mode with persistent preferences
               </p>
             </div>
-            <div className="bg-card border border-primary rounded-lg p-6">
-              <h3 className="text-lg font-mono font-semibold mb-2 text-primary">📱 Fully Responsive</h3>
-              <p className="text-sm text-secondary">
+            <div className="rounded-lg p-6" style={{ backgroundColor: '#161616', border: '1px solid #2a2a2a' }}>
+              <h3 className="text-lg font-mono font-semibold mb-2" style={{ fontFamily: 'monospace', color: '#f5f5f5' }}>
+                📱 Fully Responsive
+              </h3>
+              <p className="text-sm" style={{ color: '#a3a3a3' }}>
                 Optimized for mobile, tablet, and desktop devices
               </p>
             </div>
-            <div className="bg-card border border-primary rounded-lg p-6">
-              <h3 className="text-lg font-mono font-semibold mb-2 text-primary">🆓 Completely Free</h3>
-              <p className="text-sm text-secondary">
+            <div className="rounded-lg p-6" style={{ backgroundColor: '#161616', border: '1px solid #2a2a2a' }}>
+              <h3 className="text-lg font-mono font-semibold mb-2" style={{ fontFamily: 'monospace', color: '#f5f5f5' }}>
+                🆓 Completely Free
+              </h3>
+              <p className="text-sm" style={{ color: '#a3a3a3' }}>
                 No registration, no API keys, no limits
               </p>
             </div>
@@ -243,8 +270,8 @@ export default function AboutPage() {
               </a>
             </div>
           </div>
-        </footer>
-      </div>
-    </main>
+        </main>
+      </body>
+    </html>
   );
 }
