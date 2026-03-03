@@ -1,0 +1,145 @@
+/**
+ * Overview Panel Component
+ * 
+ * Displays summary statistics for selected package and all packages combined.
+ */
+
+import type { PackageData } from '@/types';
+import { formatNumber } from '@/lib/utils';
+import { config } from '@/lib/config';
+import { LinkOutlined, StarOutlined, GithubOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
+
+interface OverviewPanelProps {
+  packages: PackageData[];
+  selectedPackage: PackageData;
+}
+
+export default function OverviewPanel({ packages, selectedPackage }: OverviewPanelProps) {
+  const totals = packages.reduce(
+    (acc, pkg) => ({
+      daily: acc.daily + pkg.stats.daily,
+      weekly: acc.weekly + pkg.stats.weekly,
+      monthly: acc.monthly + pkg.stats.monthly,
+      allTime: acc.allTime + pkg.stats.allTime,
+    }),
+    { daily: 0, weekly: 0, monthly: 0, allTime: 0 }
+  );
+
+  const hasMultiplePackages = packages.length > 1;
+
+  const StatBox = ({ label, value, color }: { label: string; value: number; color: string }) => (
+    <div className="flex-1 px-2 sm:px-3 py-2 sm:py-3 border-r border-primary last:border-r-0 flex flex-col justify-center min-w-0">
+      <Tooltip title={label}>
+        <div className="text-[9px] sm:text-[10px] font-mono text-tertiary uppercase tracking-wider mb-1.5 sm:mb-2 whitespace-nowrap truncate">
+          {label}
+        </div>
+      </Tooltip>
+      <Tooltip title={formatNumber(value)}>
+        <div className={`text-base sm:text-xl font-bold font-mono leading-none ${color} truncate`}>
+          {formatNumber(value)}
+        </div>
+      </Tooltip>
+    </div>
+  );
+
+  return (
+    <div className="p-4 sm:p-5">
+      {/* Selected Package Info */}
+      <div className="mb-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-3 mb-1.5 flex-wrap">
+              <Tooltip title={selectedPackage.name}>
+                <h2 className="text-xl font-bold font-mono text-primary truncate">
+                  {selectedPackage.name}
+                </h2>
+              </Tooltip>
+              <a
+                href={`https://www.npmjs.com/package/${selectedPackage.name}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-shrink-0 px-2.5 py-1 bg-accent-primary hover:bg-accent-secondary text-white rounded font-mono text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                title="View on npm"
+              >
+                <LinkOutlined />
+                <span className="hidden sm:inline">npm</span>
+              </a>
+              {selectedPackage.repositoryUrl && (
+                <a
+                  href={selectedPackage.repositoryUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-shrink-0 px-2.5 py-1 bg-card hover:bg-elevated border border-primary rounded font-mono text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                  title={selectedPackage.githubStars !== undefined ? `${selectedPackage.githubStars.toLocaleString()} stars on GitHub` : "View on GitHub"}
+                >
+                  <GithubOutlined className="text-primary" />
+                  {selectedPackage.githubStars !== undefined && (
+                    <>
+                      <StarOutlined className="text-yellow-500" />
+                      <span className="text-primary font-semibold">
+                        {selectedPackage.githubStars.toLocaleString()}
+                      </span>
+                    </>
+                  )}
+                  {selectedPackage.githubStars === undefined && (
+                    <span className="text-primary font-semibold">GitHub</span>
+                  )}
+                </a>
+              )}
+            </div>
+            {config.features.showDescriptions && (
+              <Tooltip title={selectedPackage.description}>
+                <p className="text-xs text-secondary leading-relaxed line-clamp-1">
+                  {selectedPackage.description}
+                </p>
+              </Tooltip>
+            )}
+          </div>
+          {config.features.showVersions && (
+            <Tooltip title={`Version ${selectedPackage.version}`}>
+              <div className="flex-shrink-0 px-3 py-1.5 bg-card border border-primary rounded font-mono text-xs text-secondary">
+                v{selectedPackage.version}
+              </div>
+            </Tooltip>
+          )}
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className={`grid grid-cols-1 ${hasMultiplePackages ? 'lg:grid-cols-2' : ''} gap-3 sm:gap-4`}>
+        {/* Current Package Stats */}
+        <div className="bg-card border border-primary rounded-lg overflow-hidden shadow-sm">
+          <div className="px-3 py-2 bg-elevated border-b border-primary">
+            <div className="text-xs font-mono text-tertiary uppercase tracking-wider font-semibold">
+              {hasMultiplePackages ? 'Current Package' : 'Download Statistics'}
+            </div>
+          </div>
+          <div className="flex h-20">
+            <StatBox label="Daily Avg" value={selectedPackage.stats.daily} color="text-accent-blue" />
+            <StatBox label="Weekly" value={selectedPackage.stats.weekly} color="text-accent-cyan" />
+            <StatBox label="Monthly" value={selectedPackage.stats.monthly} color="text-accent-purple" />
+            <StatBox label="All Time" value={selectedPackage.stats.allTime} color="text-accent-primary" />
+          </div>
+        </div>
+
+        {/* Total Stats - Only show if multiple packages */}
+        {hasMultiplePackages && (
+          <div className="bg-card border border-primary rounded-lg overflow-hidden shadow-sm">
+            <div className="px-3 py-2 bg-elevated border-b border-primary">
+              <div className="text-xs font-mono text-tertiary uppercase tracking-wider font-semibold">
+                All Packages Combined
+              </div>
+            </div>
+            <div className="flex h-20">
+              <StatBox label="Daily Avg" value={totals.daily} color="text-accent-blue" />
+              <StatBox label="Weekly" value={totals.weekly} color="text-accent-cyan" />
+              <StatBox label="Monthly" value={totals.monthly} color="text-accent-purple" />
+              <StatBox label="All Time" value={totals.allTime} color="text-accent-primary" />
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
