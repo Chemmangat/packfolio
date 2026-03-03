@@ -7,7 +7,7 @@
 import type { PackageData } from '@/types';
 import { formatNumber } from '@/lib/utils';
 import { config } from '@/lib/config';
-import { LinkOutlined } from '@ant-design/icons';
+import { LinkOutlined, StarOutlined, GithubOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 
 interface OverviewPanelProps {
@@ -49,7 +49,7 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
       <div className="mb-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-3 mb-1.5">
+            <div className="flex items-center gap-3 mb-1.5 flex-wrap">
               <Tooltip title={selectedPackage.name}>
                 <h2 className="text-xl font-bold font-mono text-primary truncate">
                   {selectedPackage.name}
@@ -65,6 +65,28 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
                 <LinkOutlined />
                 <span className="hidden sm:inline">npm</span>
               </a>
+              {selectedPackage.repositoryUrl && (
+                <a
+                  href={selectedPackage.repositoryUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-shrink-0 px-2.5 py-1 bg-card hover:bg-elevated border border-primary rounded font-mono text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                  title={selectedPackage.githubStars !== undefined ? `${selectedPackage.githubStars.toLocaleString()} stars on GitHub` : "View on GitHub"}
+                >
+                  <GithubOutlined className="text-primary" />
+                  {selectedPackage.githubStars !== undefined && (
+                    <>
+                      <StarOutlined className="text-yellow-500" />
+                      <span className="text-primary font-semibold">
+                        {selectedPackage.githubStars.toLocaleString()}
+                      </span>
+                    </>
+                  )}
+                  {selectedPackage.githubStars === undefined && (
+                    <span className="text-primary font-semibold">GitHub</span>
+                  )}
+                </a>
+              )}
             </div>
             {config.features.showDescriptions && (
               <Tooltip title={selectedPackage.description}>

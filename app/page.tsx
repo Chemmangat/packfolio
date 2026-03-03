@@ -14,7 +14,7 @@ import Dashboard from '@/components/Dashboard';
 import LoadingAnimation from '@/components/LoadingAnimation';
 import ContributeModal from '@/components/ContributeModal';
 import LegalModal from '@/components/LegalModal';
-import { fetchUserPackages, fetchPackageStats } from '@/lib/api';
+import { fetchUserPackages, fetchPackageStats, fetchGitHubStarsForPackage } from '@/lib/api';
 import { useTheme } from '@/contexts/ThemeContext';
 import { config } from '@/lib/config';
 import type { PackageData } from '@/types';
@@ -182,8 +182,8 @@ export default function Home() {
       // Store all packages
       setAllPackages(userPackages);
       
-      // Load first 10 packages with stats
-      const INITIAL_LOAD = 10;
+      // Load first 1 package with stats to show results immediately
+      const INITIAL_LOAD = 1;
       const initialPackages = userPackages.slice(0, INITIAL_LOAD);
       const packagesWithStats: PackageData[] = [];
       
@@ -194,7 +194,8 @@ export default function Home() {
         
         try {
           const stats = await fetchPackageStats(pkg.name);
-          packagesWithStats.push({ ...pkg, stats });
+          const githubStars = await fetchGitHubStarsForPackage(pkg.name, pkg.repositoryUrl);
+          packagesWithStats.push({ ...pkg, stats, githubStars });
         } catch (error: any) {
           // If rate limited, show message and add with zero stats
           if (error.message?.includes('429')) {
@@ -218,13 +219,56 @@ export default function Home() {
         setPackages(packagesWithStats);
         setSuggestions([]);
         setShowSuggestions(false);
+        setLoading(false);
         
+        // Automatically load next 9 packages in the background
         if (userPackages.length > INITIAL_LOAD) {
-          message.success(`Loaded ${packagesWithStats.length} of ${userPackages.length} packages. Click "Load More" to see more.`, 4);
+          message.success(`Loaded ${packagesWithStats.length} package. Loading more...`, 2);
+          
+          // Load next 9 packages automatically
+          setTimeout(async () => {
+            const SECOND_BATCH = 9;
+            const nextBatch = userPackages.slice(INITIAL_LOAD, INITIAL_LOAD + SECOND_BATCH);
+            const nextPackagesWithStats: PackageData[] = [];
+            
+            for (let i = 0; i < nextBatch.length; i++) {
+              if (abortControllerRef.current?.signal.aborted) return;
+              
+              const pkg = nextBatch[i];
+              
+              try {
+                const stats = await fetchPackageStats(pkg.name);
+                const githubStars = await fetchGitHubStarsForPackage(pkg.name, pkg.repositoryUrl);
+                nextPackagesWithStats.push({ ...pkg, stats, githubStars });
+              } catch (error: any) {
+                if (error.message?.includes('429')) {
+                  setRateLimited(true);
+                  nextPackagesWithStats.push({ 
+                    ...pkg, 
+                    stats: { daily: 0, weekly: 0, monthly: 0, allTime: 0, downloads: [] }
+                  });
+                } else {
+                  nextPackagesWithStats.push({ 
+                    ...pkg, 
+                    stats: { daily: 0, weekly: 0, monthly: 0, allTime: 0, downloads: [] }
+                  });
+                }
+              }
+            }
+            
+            if (isMountedRef.current && !abortControllerRef.current?.signal.aborted) {
+              setPackages(prev => [...prev, ...nextPackagesWithStats]);
+              const remaining = userPackages.length - (INITIAL_LOAD + nextPackagesWithStats.length);
+              if (remaining > 0) {
+                message.success(`Loaded ${INITIAL_LOAD + nextPackagesWithStats.length} of ${userPackages.length} packages. Click "Load More" for more.`, 3);
+              } else {
+                message.success(`All ${INITIAL_LOAD + nextPackagesWithStats.length} packages loaded!`, 2);
+              }
+            }
+          }, 100);
         } else {
           message.success(`Loaded ${packagesWithStats.length} package${packagesWithStats.length > 1 ? 's' : ''}`);
         }
-        setLoading(false);
       }
     } catch (error: any) {
       if (isMountedRef.current) {
@@ -285,7 +329,8 @@ export default function Home() {
       
       try {
         const stats = await fetchPackageStats(pkg.name);
-        newPackagesWithStats.push({ ...pkg, stats });
+        const githubStars = await fetchGitHubStarsForPackage(pkg.name, pkg.repositoryUrl);
+        newPackagesWithStats.push({ ...pkg, stats, githubStars });
       } catch (error: any) {
         if (error.message?.includes('429')) {
           message.warning('Rate limit reached. Please wait a moment before loading more.', 3);
@@ -582,129 +627,108 @@ export default function Home() {
       <div className="flex-1 overflow-hidden">
         {!searched && !loading && (
           <div className="h-full flex items-center justify-center bg-primary relative overflow-hidden">
-            {/* Animated Gradient Orbs - Luxury Glow Effect */}
-            <div className="absolute inset-0 overflow-hidden">
-              {/* Primary Glow - Deep Blue (Largest) */}
-              <div 
-                className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full blur-3xl opacity-25 animate-pulse"
-                style={{
-                  background: 'radial-gradient(circle, rgba(30, 58, 138, 0.7) 0%, rgba(30, 58, 138, 0) 70%)',
-                  animation: 'float 8s ease-in-out infinite',
-                  animationDelay: '0s'
-                }}
-              />
+            {/* Minimal Gradient Grid Background */}
+            <div className="absolute inset-0">
+              {/* Subtle gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-secondary opacity-60"></div>
               
-              {/* Secondary Glow - Cyan Blue */}
-              <div 
-                className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-3xl opacity-20 animate-pulse"
-                style={{
-                  background: 'radial-gradient(circle, rgba(6, 182, 212, 0.6) 0%, rgba(6, 182, 212, 0) 70%)',
-                  animation: 'float 10s ease-in-out infinite',
-                  animationDelay: '2s'
-                }}
-              />
-              
-              {/* Tertiary Glow - Dark Red (Accent) */}
-              <div 
-                className="absolute top-1/2 right-1/3 w-64 h-64 rounded-full blur-3xl opacity-12 animate-pulse"
-                style={{
-                  background: 'radial-gradient(circle, rgba(139, 0, 0, 0.5) 0%, rgba(139, 0, 0, 0) 70%)',
-                  animation: 'float 12s ease-in-out infinite',
-                  animationDelay: '4s'
-                }}
-              />
-            </div>
-            
-            {/* Subtle Tech Background */}
-            <div className="absolute inset-0 opacity-[0.03]">
               {/* Grid Pattern */}
-              <div className="absolute inset-0" style={{
+              <div className="absolute inset-0 opacity-[0.15]" style={{
                 backgroundImage: `
                   linear-gradient(var(--border-primary) 1px, transparent 1px),
                   linear-gradient(90deg, var(--border-primary) 1px, transparent 1px)
                 `,
-                backgroundSize: '50px 50px'
+                backgroundSize: '60px 60px'
               }} />
               
-              {/* Floating Code Snippets */}
-              <div className="absolute top-10 left-10 font-mono text-xs text-secondary opacity-30">
-                npm install
-              </div>
-              <div className="absolute top-32 right-20 font-mono text-xs text-secondary opacity-30">
-                package.json
-              </div>
-              <div className="absolute bottom-40 left-32 font-mono text-xs text-secondary opacity-30">
-                {"{ downloads: 1M }"}
-              </div>
-              <div className="absolute bottom-20 right-40 font-mono text-xs text-secondary opacity-30">
-                npm publish
-              </div>
-              <div className="absolute top-1/2 left-1/4 font-mono text-xs text-secondary opacity-30">
-                @scope/package
-              </div>
-              <div className="absolute top-1/3 right-1/3 font-mono text-xs text-secondary opacity-30">
-                {"const stats = {}"}
-              </div>
+              {/* Subtle gradient accent */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-accent-primary/5 via-transparent to-accent-cyan/5"></div>
             </div>
             
-            <div className="text-center max-w-2xl px-6 relative z-10">
-              {/* Animated Terminal Icon */}
-              <div className="relative inline-flex items-center justify-center mb-8">
-                {/* Pulsing Glow Ring */}
-                <div className="absolute inset-0 bg-accent-primary opacity-10 rounded-2xl blur-3xl scale-150 animate-pulse"></div>
-                <div 
-                  className="absolute inset-0 bg-accent-primary rounded-2xl blur-2xl"
-                  style={{
-                    animation: 'breathe 4s ease-in-out infinite'
-                  }}
-                ></div>
-                
-                <div className="relative bg-card border border-primary rounded-xl p-6 shadow-2xl w-64">
-                  <div className="flex items-center gap-2 mb-4 pb-3 border-b border-primary">
-                    <div className="flex gap-1.5">
-                      <div className="w-3 h-3 rounded-full bg-red-500 opacity-70"></div>
-                      <div className="w-3 h-3 rounded-full bg-yellow-500 opacity-70"></div>
-                      <div className="w-3 h-3 rounded-full bg-green-500 opacity-70"></div>
-                    </div>
-                    <span className="text-[10px] text-tertiary uppercase tracking-wider ml-2">terminal</span>
-                  </div>
-                  
-                  <div className="space-y-2 text-left font-mono text-xs">
-                    <div className="flex items-center gap-2">
-                      <span className="text-accent-primary">$</span>
-                      <span className="text-secondary">npm search</span>
-                      <span className="animate-pulse text-accent-primary">▊</span>
-                    </div>
-                    <div className="h-12 border border-primary rounded bg-secondary/30 flex items-center justify-center">
-                      <div className="flex gap-1">
-                        <div className="w-1.5 h-1.5 rounded-full bg-accent-primary animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                        <div className="w-1.5 h-1.5 rounded-full bg-accent-primary animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                        <div className="w-1.5 h-1.5 rounded-full bg-accent-primary animate-bounce" style={{ animationDelay: '300ms' }}></div>
+            <div className="w-full max-w-6xl px-6 relative z-10">
+              <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+                {/* Left side - Terminal and Title */}
+                <div className="text-center lg:text-left space-y-6">
+                  {/* Terminal Icon - Minimal animation */}
+                  <div className="relative inline-flex items-center justify-center lg:justify-start mb-6">
+                    <div className="relative bg-card border border-primary rounded-xl p-4 shadow-lg w-56">
+                      <div className="flex items-center gap-2 mb-3 pb-2 border-b border-primary">
+                        <div className="flex gap-1.5">
+                          <div className="w-2 h-2 rounded-full bg-red-500 opacity-70"></div>
+                          <div className="w-2 h-2 rounded-full bg-yellow-500 opacity-70"></div>
+                          <div className="w-2 h-2 rounded-full bg-green-500 opacity-70"></div>
+                        </div>
+                        <span className="text-[9px] text-tertiary uppercase tracking-wider ml-1">terminal</span>
+                      </div>
+                      
+                      <div className="space-y-2 text-left font-mono text-xs">
+                        <div className="flex items-center gap-2">
+                          <span className="text-accent-primary">$</span>
+                          <span className="text-secondary">npm search</span>
+                          <span className="animate-pulse text-accent-primary">▊</span>
+                        </div>
+                        <div className="h-10 border border-primary rounded bg-secondary/30 flex items-center justify-center">
+                          <div className="flex gap-1">
+                            <div className="w-1.5 h-1.5 rounded-full bg-accent-primary animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                            <div className="w-1.5 h-1.5 rounded-full bg-accent-primary animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                            <div className="w-1.5 h-1.5 rounded-full bg-accent-primary animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
 
-              <div className="space-y-4">
-                <h2 className="text-2xl font-bold font-mono text-primary">
-                  Ready to analyze
-                </h2>
-                <p className="text-secondary font-mono text-sm leading-relaxed">
-                  Enter a username or package name to begin analysis
-                </p>
-                
-                <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
-                  <span className="text-tertiary font-mono text-xs">Try:</span>
-                  <code className="px-3 py-1.5 bg-card border border-primary rounded-md text-accent-primary font-mono text-xs hover:border-accent-primary transition-colors cursor-default">
-                    sindresorhus
-                  </code>
-                  <code className="px-3 py-1.5 bg-card border border-primary rounded-md text-accent-primary font-mono text-xs hover:border-accent-primary transition-colors cursor-default">
-                    @babel/core
-                  </code>
-                  <code className="px-3 py-1.5 bg-card border border-primary rounded-md text-accent-primary font-mono text-xs hover:border-accent-primary transition-colors cursor-default">
-                    react
-                  </code>
+                  <div className="space-y-3">
+                    <h2 className="text-3xl sm:text-4xl font-bold font-mono text-primary">
+                      npm Package Analytics
+                    </h2>
+                    <p className="text-base sm:text-lg text-secondary font-mono leading-relaxed">
+                      Track download stats, trends & GitHub stars
+                    </p>
+                  </div>
+                  
+                  <div className="pt-2">
+                    <p className="text-sm text-secondary font-mono mb-3">
+                      Try these examples:
+                    </p>
+                    <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2">
+                      <code className="px-3 py-1.5 bg-card border border-primary rounded-md text-accent-primary font-mono text-xs hover:border-accent-primary transition-colors cursor-default">
+                        sindresorhus
+                      </code>
+                      <code className="px-3 py-1.5 bg-card border border-primary rounded-md text-accent-primary font-mono text-xs hover:border-accent-primary transition-colors cursor-default">
+                        @babel/core
+                      </code>
+                      <code className="px-3 py-1.5 bg-card border border-primary rounded-md text-accent-primary font-mono text-xs hover:border-accent-primary transition-colors cursor-default">
+                        react
+                      </code>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right side - Features */}
+                <div className="flex items-center justify-center lg:justify-start">
+                  <div className="space-y-5 text-center lg:text-left">
+                    <div>
+                      <p className="text-base text-primary font-mono">
+                        Real-time download statistics
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-base text-primary font-mono">
+                        Interactive trend charts
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-base text-primary font-mono">
+                        GitHub stars integration
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-base text-primary font-mono">
+                        Search by username or package
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

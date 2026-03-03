@@ -3,6 +3,8 @@ export interface PackageData {
   version: string;
   description: string;
   stats: PackageStats;
+  githubStars?: number;
+  repositoryUrl?: string;
 }
 
 export interface PackageStats {

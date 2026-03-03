@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import type { PackageData } from '@/types';
 import { formatCompactNumber } from '@/lib/utils';
 import { config } from '@/lib/config';
@@ -27,6 +28,47 @@ export default function PackageList({
   loadingMore,
   remainingCount 
 }: PackageListProps) {
+  const [animatedPackages, setAnimatedPackages] = useState<Set<string>>(new Set());
+  const prevPackagesRef = useRef<string[]>([]);
+
+  useEffect(() => {
+    const prevNames = prevPackagesRef.current;
+    const currentNames = packages.map(pkg => pkg.name);
+    
+    // Find newly added packages
+    const newPackages = currentNames.filter(name => !prevNames.includes(name));
+    
+    if (newPackages.length > 0) {
+      // Add new packages to animated set
+      setAnimatedPackages(new Set(newPackages));
+      
+      // Remove animation after it completes
+      const timer = setTimeout(() => {
+        setAnimatedPackages(new Set());
+      }, 800);
+      
+      return () => clearTimeout(timer);
+    }
+    
+    prevPackagesRef.current = currentNames;
+  }, [packages]);
+
+  const getAnimationDelay = (pkgName: string): string => {
+    if (!animatedPackages.has(pkgName)) return '0ms';
+    
+    // Find the index of this package in the current list
+    const currentIndex = packages.findIndex(pkg => pkg.name === pkgName);
+    const prevLength = prevPackagesRef.current.length;
+    
+    // Calculate delay based on position relative to previous length
+    if (currentIndex >= prevLength) {
+      const relativeIndex = currentIndex - prevLength;
+      return `${relativeIndex * 80}ms`;
+    }
+    
+    return '0ms';
+  };
+
   return (
     <div className="h-full flex flex-col">
       <div className="p-4 flex-1 overflow-y-auto">
@@ -38,7 +80,13 @@ export default function PackageList({
         
         <div className="space-y-2">
           {packages.map((pkg) => (
-            <div key={pkg.name} className="relative group">
+            <div 
+              key={pkg.name} 
+              className={`relative group ${animatedPackages.has(pkg.name) ? 'animate-slide-in' : ''}`}
+              style={{
+                animationDelay: getAnimationDelay(pkg.name)
+              }}
+            >
               <button
                 onClick={() => onSelect(pkg)}
                 className={`w-full text-left p-3 rounded border transition-all cursor-pointer ${
