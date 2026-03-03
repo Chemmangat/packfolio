@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Card, Statistic, Row, Col, Segmented } from 'antd';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { StarOutlined, GithubOutlined } from '@ant-design/icons';
 import type { PackageData, TimeRange } from '@/types';
 
 interface PackageCardProps {
@@ -20,11 +21,30 @@ export default function PackageCard({ package: pkg }: PackageCardProps) {
   return (
     <Card className="shadow-sm hover:shadow-md transition-shadow">
       <div className="mb-4">
-        <h3 className="text-xl font-semibold text-gray-900 font-mono mb-1">
-          {pkg.name}
-        </h3>
-        <p className="text-sm text-gray-500 mb-1">v{pkg.version}</p>
-        <p className="text-sm text-gray-600">{pkg.description}</p>
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-xl font-semibold text-gray-900 font-mono mb-1">
+              {pkg.name}
+            </h3>
+            <p className="text-sm text-gray-500 mb-1">v{pkg.version}</p>
+            <p className="text-sm text-gray-600">{pkg.description}</p>
+          </div>
+          {pkg.githubStars !== undefined && (
+            <a
+              href={pkg.repositoryUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors flex-shrink-0"
+              title="View on GitHub"
+            >
+              <GithubOutlined className="text-gray-700" />
+              <StarOutlined className="text-yellow-500 text-xs" />
+              <span className="text-sm font-mono font-semibold text-gray-900">
+                {pkg.githubStars.toLocaleString()}
+              </span>
+            </a>
+          )}
+        </div>
       </div>
 
       <Row gutter={[12, 12]} className="mb-6">
