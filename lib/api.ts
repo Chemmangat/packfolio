@@ -168,12 +168,15 @@ async function fetchDirectPackage(packageName: string) {
     
     const data = await response.json();
     const repositoryUrl = extractRepositoryUrl(data.repository);
+    const latestVersion = data['dist-tags']?.latest || Object.keys(data.versions || {}).pop() || '0.0.0';
+    const lastPublish = data.time?.[latestVersion] || data.time?.modified || '';
     
     return {
       name: data.name,
-      version: data['dist-tags']?.latest || Object.keys(data.versions || {}).pop() || '0.0.0',
+      version: latestVersion,
       description: data.description || 'No description available',
       repositoryUrl,
+      lastPublish,
     };
   } catch (error) {
     console.error('Direct package lookup failed:', error);
@@ -220,11 +223,13 @@ async function searchPackages(query: string, username: string) {
     })
     .map((obj: any) => {
       const repositoryUrl = extractRepositoryUrl(obj.package.links?.repository);
+      const lastPublish = obj.package.date || '';
       return {
         name: obj.package.name,
         version: obj.package.version,
         description: obj.package.description || 'No description available',
         repositoryUrl,
+        lastPublish,
       };
     });
   

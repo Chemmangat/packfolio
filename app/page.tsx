@@ -9,8 +9,8 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { Input, Button, message, Segmented, Tooltip } from 'antd';
-import { SearchOutlined, SunOutlined, MoonOutlined, InfoCircleOutlined, CloseOutlined, CloseCircleOutlined, HeartOutlined, FileTextOutlined } from '@ant-design/icons';
-import Dashboard from '@/components/Dashboard';
+import { SearchOutlined, SunOutlined, MoonOutlined, InfoCircleOutlined, CloseOutlined, CloseCircleOutlined, HeartOutlined, FileTextOutlined, StarOutlined, FireOutlined, TrophyOutlined, BarChartOutlined } from '@ant-design/icons';
+import Dashboard from '@/components/EnhancedDashboard';
 import LoadingAnimation from '@/components/LoadingAnimation';
 import ContributeModal from '@/components/ContributeModal';
 import LegalModal from '@/components/LegalModal';
@@ -627,107 +627,154 @@ export default function Home() {
       <div className="flex-1 overflow-hidden">
         {!searched && !loading && (
           <div className="h-full flex items-center justify-center bg-primary relative overflow-hidden">
-            {/* Minimal Gradient Grid Background */}
+            {/* Technical Grid Background */}
             <div className="absolute inset-0">
-              {/* Subtle gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-secondary opacity-60"></div>
+              {/* Base gradient */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary via-secondary to-primary"></div>
               
               {/* Grid Pattern */}
-              <div className="absolute inset-0 opacity-[0.15]" style={{
+              <div className="absolute inset-0 opacity-20" style={{
                 backgroundImage: `
                   linear-gradient(var(--border-primary) 1px, transparent 1px),
                   linear-gradient(90deg, var(--border-primary) 1px, transparent 1px)
                 `,
-                backgroundSize: '60px 60px'
+                backgroundSize: '40px 40px'
               }} />
               
-              {/* Subtle gradient accent */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-accent-primary/5 via-transparent to-accent-cyan/5"></div>
+              {/* Subtle accent spots */}
+              <div className="absolute top-0 left-0 w-96 h-96 bg-accent-primary/5 rounded-full blur-3xl"></div>
+              <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent-cyan/5 rounded-full blur-3xl"></div>
             </div>
             
-            <div className="w-full max-w-6xl px-6 relative z-10">
-              <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-                {/* Left side - Terminal and Title */}
+            <div className="w-full max-w-7xl px-6 relative z-10">
+              <div className="grid lg:grid-cols-2 gap-12 items-center">
+                {/* Left side - Main Content */}
                 <div className="text-center lg:text-left space-y-6">
-                  {/* Terminal Icon - Minimal animation */}
-                  <div className="relative inline-flex items-center justify-center lg:justify-start mb-6">
-                    <div className="relative bg-card border border-primary rounded-xl p-4 shadow-lg w-56">
-                      <div className="flex items-center gap-2 mb-3 pb-2 border-b border-primary">
-                        <div className="flex gap-1.5">
-                          <div className="w-2 h-2 rounded-full bg-red-500 opacity-70"></div>
-                          <div className="w-2 h-2 rounded-full bg-yellow-500 opacity-70"></div>
-                          <div className="w-2 h-2 rounded-full bg-green-500 opacity-70"></div>
-                        </div>
-                        <span className="text-[9px] text-tertiary uppercase tracking-wider ml-1">terminal</span>
-                      </div>
-                      
-                      <div className="space-y-2 text-left font-mono text-xs">
-                        <div className="flex items-center gap-2">
-                          <span className="text-accent-primary">$</span>
-                          <span className="text-secondary">npm search</span>
-                          <span className="animate-pulse text-accent-primary">▊</span>
-                        </div>
-                        <div className="h-10 border border-primary rounded bg-secondary/30 flex items-center justify-center">
-                          <div className="flex gap-1">
-                            <div className="w-1.5 h-1.5 rounded-full bg-accent-primary animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                            <div className="w-1.5 h-1.5 rounded-full bg-accent-primary animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                            <div className="w-1.5 h-1.5 rounded-full bg-accent-primary animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <h2 className="text-3xl sm:text-4xl font-bold font-mono text-primary">
-                      npm Package Analytics
-                    </h2>
-                    <p className="text-base sm:text-lg text-secondary font-mono leading-relaxed">
-                      Track download stats, trends & GitHub stars
+                  {/* Main Heading */}
+                  <div className="space-y-4">
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-mono text-primary leading-tight">
+                      npm Package
+                      <br />
+                      <span className="text-accent-primary">Analytics</span>
+                    </h1>
+                    <p className="text-lg text-secondary font-mono leading-relaxed max-w-xl">
+                      Track downloads, analyze trends, compare packages
                     </p>
                   </div>
                   
-                  <div className="pt-2">
-                    <p className="text-sm text-secondary font-mono mb-3">
-                      Try these examples:
+                  {/* Quick Examples */}
+                  <div className="space-y-3">
+                    <p className="text-sm text-tertiary font-mono">
+                      Search by username or package:
                     </p>
                     <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2">
-                      <code className="px-3 py-1.5 bg-card border border-primary rounded-md text-accent-primary font-mono text-xs hover:border-accent-primary transition-colors cursor-default">
+                      <code className="px-4 py-2 bg-card border border-primary rounded-lg text-accent-primary font-mono text-sm hover:border-accent-primary transition-colors cursor-default">
                         sindresorhus
                       </code>
-                      <code className="px-3 py-1.5 bg-card border border-primary rounded-md text-accent-primary font-mono text-xs hover:border-accent-primary transition-colors cursor-default">
-                        @babel/core
-                      </code>
-                      <code className="px-3 py-1.5 bg-card border border-primary rounded-md text-accent-primary font-mono text-xs hover:border-accent-primary transition-colors cursor-default">
+                      <code className="px-4 py-2 bg-card border border-primary rounded-lg text-accent-cyan font-mono text-sm hover:border-accent-cyan transition-colors cursor-default">
                         react
                       </code>
+                      <code className="px-4 py-2 bg-card border border-primary rounded-lg text-accent-purple font-mono text-sm hover:border-accent-purple transition-colors cursor-default">
+                        @babel/core
+                      </code>
+                    </div>
+                  </div>
+
+                  {/* Quick Stats */}
+                  <div className="grid grid-cols-3 gap-4 pt-4">
+                    <div className="text-center lg:text-left">
+                      <div className="text-2xl font-bold font-mono text-accent-primary">6</div>
+                      <div className="text-xs text-tertiary font-mono">Features</div>
+                    </div>
+                    <div className="text-center lg:text-left">
+                      <div className="text-2xl font-bold font-mono text-accent-cyan">Free</div>
+                      <div className="text-xs text-tertiary font-mono">Forever</div>
+                    </div>
+                    <div className="text-center lg:text-left">
+                      <div className="text-2xl font-bold font-mono text-accent-purple">Fast</div>
+                      <div className="text-xs text-tertiary font-mono">Client-side</div>
                     </div>
                   </div>
                 </div>
 
-                {/* Right side - Features */}
-                <div className="flex items-center justify-center lg:justify-start">
-                  <div className="space-y-5 text-center lg:text-left">
-                    <div>
-                      <p className="text-base text-primary font-mono">
-                        Real-time download statistics
-                      </p>
+                {/* Right side - Feature List */}
+                <div className="space-y-3">
+                  <div className="bg-card border border-primary rounded-lg p-4 hover:border-accent-primary/50 transition-colors">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-accent-primary/10 border border-accent-primary/30 flex items-center justify-center">
+                        <StarOutlined className="text-accent-primary text-lg" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-mono font-semibold text-primary mb-1">
+                          Health Score
+                        </h3>
+                        <p className="text-xs text-secondary font-mono">
+                          0-100 scoring based on velocity, freshness, popularity
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-base text-primary font-mono">
-                        Interactive trend charts
-                      </p>
+                  </div>
+
+                  <div className="bg-card border border-primary rounded-lg p-4 hover:border-accent-cyan/50 transition-colors">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-accent-cyan/10 border border-accent-cyan/30 flex items-center justify-center">
+                        <FireOutlined className="text-accent-cyan text-lg" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-mono font-semibold text-primary mb-1">
+                          Trending Detection
+                        </h3>
+                        <p className="text-xs text-secondary font-mono">
+                          Identify hot packages and rising stars
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-base text-primary font-mono">
-                        GitHub stars integration
-                      </p>
+                  </div>
+
+                  <div className="bg-card border border-primary rounded-lg p-4 hover:border-accent-purple/50 transition-colors">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-accent-purple/10 border border-accent-purple/30 flex items-center justify-center">
+                        <TrophyOutlined className="text-accent-purple text-lg" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-mono font-semibold text-primary mb-1">
+                          Developer Stats
+                        </h3>
+                        <p className="text-xs text-secondary font-mono">
+                          Leaderboard, impact score, portfolio analytics
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-base text-primary font-mono">
-                        Search by username or package
-                      </p>
+                  </div>
+
+                  <div className="bg-card border border-primary rounded-lg p-4 hover:border-accent-green/50 transition-colors">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-accent-green/10 border border-accent-green/30 flex items-center justify-center">
+                        <BarChartOutlined className="text-accent-green text-lg" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-mono font-semibold text-primary mb-1">
+                          Charts & Heatmaps
+                        </h3>
+                        <p className="text-xs text-secondary font-mono">
+                          Timeline, dependency graph, download heatmap
+                        </p>
+                      </div>
                     </div>
+                  </div>
+
+                  {/* Tech Stack */}
+                  <div className="flex flex-wrap items-center gap-2 pt-2">
+                    <span className="text-[10px] text-tertiary font-mono">Built with:</span>
+                    <span className="px-2 py-1 bg-elevated border border-primary rounded text-[10px] font-mono text-secondary">
+                      Next.js
+                    </span>
+                    <span className="px-2 py-1 bg-elevated border border-primary rounded text-[10px] font-mono text-secondary">
+                      TypeScript
+                    </span>
+                    <span className="px-2 py-1 bg-elevated border border-primary rounded text-[10px] font-mono text-secondary">
+                      npm API
+                    </span>
                   </div>
                 </div>
               </div>
@@ -756,6 +803,7 @@ export default function Home() {
             onLoadMore={packages.length < allPackages.length ? handleLoadMore : undefined}
             loadingMore={loadingMore}
             remainingCount={allPackages.length - packages.length}
+            username={username}
           />
         )}
 

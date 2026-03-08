@@ -16,55 +16,20 @@
 [data-theme="dark"] {
   /* Background colors */
   --bg-primary: #0a0a0a;
-  --bg-secondary: #141414;
+  --bg-secondary: #121212;
   --bg-tertiary: #1a1a1a;
-  --bg-elevated: #1f1f1f;
-  --bg-card: #161616;
+  --bg-elevated: #1c1c1c;
+  --bg-card: #151515;
   
   /* Text colors */
-  --text-primary: #f5f5f5;
-  --text-secondary: #a3a3a3;
-  --text-tertiary: #737373;
+  --text-primary: #ffffff;
+  --text-secondary: #b4b4b4;
+  --text-tertiary: #8a8a8a;
   --text-inverse: #0a0a0a;
   
   /* Border colors */
-  --border-primary: #2a2a2a;
-  --border-secondary: #1f1f1f;
-  --border-focus: #ef4444;
-  
-  /* Accent colors */
-  --accent-primary: #ef4444;
-  --accent-secondary: #dc2626;
-  --accent-blue: #60a5fa;
-  --accent-cyan: #22d3ee;
-  --accent-purple: #a78bfa;
-  --accent-green: #34d399;
-  
-  /* Chart colors */
-  --chart-grid: #2a2a2a;
-  --chart-axis: #737373;
-  --chart-tooltip-bg: #1f1f1f;
-  --chart-tooltip-border: #2a2a2a;
-}
-
-/* Light Theme */
-[data-theme="light"] {
-  /* Background colors */
-  --bg-primary: #ffffff;
-  --bg-secondary: #fafafa;
-  --bg-tertiary: #f5f5f5;
-  --bg-elevated: #ffffff;
-  --bg-card: #fafafa;
-  
-  /* Text colors */
-  --text-primary: #0a0a0a;
-  --text-secondary: #525252;
-  --text-tertiary: #737373;
-  --text-inverse: #ffffff;
-  
-  /* Border colors */
-  --border-primary: #e5e5e5;
-  --border-secondary: #d4d4d4;
+  --border-primary: #2d2d2d;
+  --border-secondary: #252525;
   --border-focus: #ef4444;
   
   /* Accent colors */
@@ -74,12 +39,51 @@
   --accent-cyan: #06b6d4;
   --accent-purple: #8b5cf6;
   --accent-green: #10b981;
+  --accent-yellow: #f59e0b;
+  --accent-orange: #f97316;
   
   /* Chart colors */
-  --chart-grid: #e5e5e5;
-  --chart-axis: #737373;
+  --chart-grid: #2d2d2d;
+  --chart-axis: #8a8a8a;
+  --chart-tooltip-bg: #1c1c1c;
+  --chart-tooltip-border: #2d2d2d;
+}
+
+/* Light Theme */
+[data-theme="light"] {
+  /* Background colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #f1f3f5;
+  --bg-elevated: #ffffff;
+  --bg-card: #f8f9fa;
+  
+  /* Text colors */
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a4a4a;
+  --text-tertiary: #6a6a6a;
+  --text-inverse: #ffffff;
+  
+  /* Border colors */
+  --border-primary: #e0e0e0;
+  --border-secondary: #d0d0d0;
+  --border-focus: #ef4444;
+  
+  /* Accent colors */
+  --accent-primary: #ef4444;
+  --accent-secondary: #dc2626;
+  --accent-blue: #2563eb;
+  --accent-cyan: #0891b2;
+  --accent-purple: #7c3aed;
+  --accent-green: #059669;
+  --accent-yellow: #d97706;
+  --accent-orange: #ea580c;
+  
+  /* Chart colors */
+  --chart-grid: #e0e0e0;
+  --chart-axis: #6a6a6a;
   --chart-tooltip-bg: #ffffff;
-  --chart-tooltip-border: #e5e5e5;
+  --chart-tooltip-border: #e0e0e0;
 }
 
 /* ============================================
@@ -550,4 +554,264 @@ a,
 
 .animate-slide-in {
   animation: slide-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ============================================
+   CUSTOM SCROLLBAR - HIGH END
+   ============================================ */
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-primary) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border-primary);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}
+
+/* ============================================
+   DASHBOARD TABS - HIGH END
+   ============================================ */
+
+.dashboard-tabs .ant-tabs-nav {
+  background: var(--bg-elevated) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-primary) !important;
+}
+
+.dashboard-tabs .ant-tabs-tab {
+  transition: all 0.2s ease;
+}
+
+.dashboard-tabs .ant-tabs-tab:hover {
+  background: var(--bg-secondary);
+}
+
+.dashboard-tabs .ant-tabs-tab-active {
+  background: var(--bg-card);
+}
+
+.dashboard-tabs .ant-tabs-content-holder {
+  overflow: hidden;
+}
+
+/* ============================================
+   GLASS MORPHISM EFFECTS
+   ============================================ */
+
+.glass-effect {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="light"] .glass-effect {
+  background: rgba(0, 0, 0, 0.02);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* ============================================
+   SMOOTH TRANSITIONS
+   ============================================ */
+
+.smooth-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   GRADIENT ACCENTS
+   ============================================ */
+
+.gradient-accent {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================
+   HOVER EFFECTS
+   ============================================ */
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================================
+   LOADING STATES
+   ============================================ */
+
+.skeleton-loading {
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 0%,
+    var(--bg-tertiary) 50%,
+    var(--bg-secondary) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-wave 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-wave {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+.gpu-accelerated {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* ============================================
+   GRADIENT TEXT SUPPORT
+   ============================================ */
+
+.bg-clip-text {
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ============================================
+   ENHANCED CONTRAST FOR COMPONENTS
+   ============================================ */
+
+/* Better contrast for cards in dark mode */
+[data-theme="dark"] .bg-card {
+  background-color: #151515;
+  border-color: #2d2d2d;
+}
+
+[data-theme="dark"] .bg-elevated {
+  background-color: #1c1c1c;
+}
+
+/* Better contrast for cards in light mode */
+[data-theme="light"] .bg-card {
+  background-color: #f8f9fa;
+  border-color: #e0e0e0;
+}
+
+[data-theme="light"] .bg-elevated {
+  background-color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Enhanced text contrast */
+[data-theme="dark"] .text-primary {
+  color: #ffffff;
+}
+
+[data-theme="dark"] .text-secondary {
+  color: #b4b4b4;
+}
+
+[data-theme="light"] .text-primary {
+  color: #1a1a1a;
+}
+
+[data-theme="light"] .text-secondary {
+  color: #4a4a4a;
+}
+
+/* ============================================
+   LANDING PAGE ANIMATIONS
+   ============================================ */
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+
+/* ============================================
+   ICON COLOR FIXES FOR DARK MODE
+   ============================================ */
+
+/* Ensure all Ant Design icons are visible in dark mode */
+[data-theme="dark"] .anticon {
+  color: var(--text-primary);
+}
+
+/* Specific icon color overrides for dark mode */
+[data-theme="dark"] .text-accent-primary .anticon,
+[data-theme="dark"] .text-accent-cyan .anticon,
+[data-theme="dark"] .text-accent-purple .anticon,
+[data-theme="dark"] .text-accent-green .anticon,
+[data-theme="dark"] .text-blue-400 .anticon,
+[data-theme="dark"] .text-cyan-400 .anticon,
+[data-theme="dark"] .text-purple-400 .anticon,
+[data-theme="dark"] .text-green-400 .anticon,
+[data-theme="dark"] .text-red-400 .anticon,
+[data-theme="dark"] .text-yellow-400 .anticon {
+  color: inherit;
+}
+
+/* Light mode icon colors */
+[data-theme="light"] .anticon {
+  color: var(--text-primary);
 }
