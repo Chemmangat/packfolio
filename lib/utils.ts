@@ -125,3 +125,42 @@ export function average(numbers: number[]): number {
   if (numbers.length === 0) return 0;
   return Math.round(sum(numbers) / numbers.length);
 }
+
+/**
+ * Calculate growth rate between two values
+ * @param current - Current value
+ * @param previous - Previous value
+ * @returns Growth rate as percentage
+ */
+export function calculateGrowthRate(current: number, previous: number): number {
+  if (previous === 0) return current > 0 ? 100 : 0;
+  return Math.round(((current - previous) / previous) * 100);
+}
+
+/**
+ * Get days since date
+ * @param dateString - ISO date string
+ * @returns Number of days since date
+ */
+export function getDaysSince(dateString: string): number {
+  const date = new Date(dateString);
+  const today = new Date();
+  const diffTime = Math.abs(today.getTime() - date.getTime());
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
+
+/**
+ * Format relative time (e.g., "2 days ago", "3 months ago")
+ * @param dateString - ISO date string
+ * @returns Relative time string
+ */
+export function formatRelativeTime(dateString: string): string {
+  const days = getDaysSince(dateString);
+  
+  if (days === 0) return 'today';
+  if (days === 1) return 'yesterday';
+  if (days < 7) return `${days} days ago`;
+  if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
+  if (days < 365) return `${Math.floor(days / 30)} months ago`;
+  return `${Math.floor(days / 365)} years ago`;
+}

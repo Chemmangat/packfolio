@@ -116,10 +116,10 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
             </div>
           </div>
           <div className="flex h-20">
-            <StatBox label="Daily Avg" value={selectedPackage.stats.daily} color="text-accent-blue" />
-            <StatBox label="Weekly" value={selectedPackage.stats.weekly} color="text-accent-cyan" />
-            <StatBox label="Monthly" value={selectedPackage.stats.monthly} color="text-accent-purple" />
-            <StatBox label="All Time" value={selectedPackage.stats.allTime} color="text-accent-primary" />
+            <StatBox label="Daily Avg" value={selectedPackage.stats.daily} color="text-blue-400" />
+            <StatBox label="Weekly" value={selectedPackage.stats.weekly} color="text-cyan-400" />
+            <StatBox label="Monthly" value={selectedPackage.stats.monthly} color="text-purple-400" />
+            <StatBox label="All Time" value={selectedPackage.stats.allTime} color="text-red-400" />
           </div>
         </div>
 
@@ -132,10 +132,10 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
               </div>
             </div>
             <div className="flex h-20">
-              <StatBox label="Daily Avg" value={totals.daily} color="text-accent-blue" />
-              <StatBox label="Weekly" value={totals.weekly} color="text-accent-cyan" />
-              <StatBox label="Monthly" value={totals.monthly} color="text-accent-purple" />
-              <StatBox label="All Time" value={totals.allTime} color="text-accent-primary" />
+              <StatBox label="Daily Avg" value={totals.daily} color="text-blue-400" />
+              <StatBox label="Weekly" value={totals.weekly} color="text-cyan-400" />
+              <StatBox label="Monthly" value={totals.monthly} color="text-purple-400" />
+              <StatBox label="All Time" value={totals.allTime} color="text-red-400" />
             </div>
           </div>
         )}
