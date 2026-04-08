@@ -7,7 +7,7 @@
  * Handles search functionality and displays results.
  */
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Input, Button, message, Segmented, Tooltip } from 'antd';
 import { SearchOutlined, SunOutlined, MoonOutlined, InfoCircleOutlined, CloseOutlined, CloseCircleOutlined, HeartOutlined, FileTextOutlined, StarOutlined, FireOutlined, TrophyOutlined, BarChartOutlined, HistoryOutlined } from '@ant-design/icons';
@@ -42,7 +42,7 @@ interface SearchSuggestion {
   type: 'package' | 'scope';
 }
 
-export default function Home() {
+function HomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [username, setUsername] = useState('');
@@ -1009,5 +1009,13 @@ export default function Home() {
         onClose={() => setShowLegalModal(false)} 
       />
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={null}>
+      <HomeContent />
+    </Suspense>
   );
 }
