@@ -8,8 +8,9 @@
  */
 
 import { useEffect, useState, useCallback, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Input, Button, message, Segmented, Tooltip } from 'antd';
-import { SearchOutlined, SunOutlined, MoonOutlined, InfoCircleOutlined, CloseOutlined, CloseCircleOutlined, HeartOutlined, FileTextOutlined, StarOutlined, FireOutlined, TrophyOutlined, BarChartOutlined } from '@ant-design/icons';
+import { SearchOutlined, SunOutlined, MoonOutlined, InfoCircleOutlined, CloseOutlined, CloseCircleOutlined, HeartOutlined, FileTextOutlined, StarOutlined, FireOutlined, TrophyOutlined, BarChartOutlined, HistoryOutlined } from '@ant-design/icons';
 import Dashboard from '@/components/EnhancedDashboard';
 import LoadingAnimation from '@/components/LoadingAnimation';
 import ContributeModal from '@/components/ContributeModal';
@@ -18,6 +19,20 @@ import { fetchUserPackages, fetchPackageStats, fetchGitHubStarsForPackage } from
 import { useTheme } from '@/contexts/ThemeContext';
 import { config } from '@/lib/config';
 import type { PackageData } from '@/types';
+
+const HISTORY_KEY = 'packfolio_search_history';
+const MAX_HISTORY = 8;
+
+function getSearchHistory(): string[] {
+  if (typeof window === 'undefined') return [];
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); } catch { return []; }
+}
+
+function addToHistory(query: string) {
+  if (!query.trim()) return;
+  const prev = getSearchHistory().filter(h => h !== query);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify([query, ...prev].slice(0, MAX_HISTORY)));
+}
 
 type Registry = 'npm' | 'pip';
 
@@ -28,9 +43,11 @@ interface SearchSuggestion {
 }
 
 export default function Home() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [username, setUsername] = useState('');
   const [packages, setPackages] = useState<PackageData[]>([]);
-  const [allPackages, setAllPackages] = useState<any[]>([]); // All package metadata
+  const [allPackages, setAllPackages] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [searched, setSearched] = useState(false);
@@ -41,22 +58,37 @@ export default function Home() {
   const [showContributeModal, setShowContributeModal] = useState(false);
   const [showLegalModal, setShowLegalModal] = useState(false);
   const [rateLimited, setRateLimited] = useState(false);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const { theme, toggleTheme } = useTheme();
-  
+
   // Refs to track mounted state and abort controllers
   const isMountedRef = useRef(true);
   const abortControllerRef = useRef<AbortController | null>(null);
   const suggestionsAbortRef = useRef<AbortController | null>(null);
   const shouldAutoSearchRef = useRef(false);
+  const initialLoadDoneRef = useRef(false);
 
-  // Set mounted state and cleanup on unmount
+  // Load history and auto-search from URL on mount
   useEffect(() => {
     isMountedRef.current = true;
+    setSearchHistory(getSearchHistory());
+
+    // Restore search from URL param ?q=...
+    if (!initialLoadDoneRef.current) {
+      initialLoadDoneRef.current = true;
+      const q = searchParams.get('q');
+      if (q && q.trim()) {
+        setUsername(q.trim());
+        shouldAutoSearchRef.current = true;
+      }
+    }
+
     return () => {
       isMountedRef.current = false;
       abortControllerRef.current?.abort();
       suggestionsAbortRef.current?.abort();
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Debounced search for suggestions with rate limiting
@@ -164,6 +196,11 @@ export default function Home() {
     setLoading(true);
     setSearched(true);
     setRateLimited(false);
+
+    // Persist search to URL and history
+    router.replace(`?q=${encodeURIComponent(username.trim())}`, { scroll: false });
+    addToHistory(username.trim());
+    setSearchHistory(getSearchHistory());
     
     // Create new abort controller for this search
     abortControllerRef.current = new AbortController();
@@ -283,7 +320,7 @@ export default function Home() {
         setLoading(false);
       }
     }
-  }, [username, registry, loading]);
+  }, [username, registry, loading, router]);
 
   // Auto-search when username is set from suggestion
   useEffect(() => {
@@ -311,6 +348,7 @@ export default function Home() {
     setSuggestions([]);
     setShowSuggestions(false);
     setRateLimited(false);
+    router.replace('/', { scroll: false });
   };
 
   const handleLoadMore = useCallback(async () => {
@@ -545,6 +583,35 @@ export default function Home() {
                           {suggestion.description}
                         </div>
                       </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Search History Dropdown — shown when focused with no suggestions */}
+              {!showSuggestions && !loading && searchHistory.length > 0 && username.length === 0 && (
+                <div
+                  className="absolute top-full left-0 right-0 mt-2 bg-elevated border border-primary rounded-lg shadow-2xl overflow-hidden"
+                  style={{ zIndex: 99999 }}
+                  onMouseDown={(e) => e.preventDefault()}
+                >
+                  <div className="px-4 py-2 border-b border-primary flex items-center justify-between">
+                    <span className="text-[10px] font-mono text-tertiary uppercase tracking-wider">Recent searches</span>
+                    <button
+                      onClick={() => { localStorage.removeItem(HISTORY_KEY); setSearchHistory([]); }}
+                      className="text-[10px] font-mono text-tertiary hover:text-primary transition-colors cursor-pointer"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                  {searchHistory.map((h, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => { setUsername(h); shouldAutoSearchRef.current = true; }}
+                      className="w-full text-left px-4 py-2.5 hover:bg-card transition-colors border-b border-primary last:border-b-0 flex items-center gap-3 cursor-pointer"
+                    >
+                      <HistoryOutlined className="text-tertiary text-xs flex-shrink-0" />
+                      <span className="font-mono text-sm text-primary truncate">{h}</span>
                     </button>
                   ))}
                 </div>

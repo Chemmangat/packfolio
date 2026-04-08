@@ -11,6 +11,7 @@ import {
   DashboardOutlined, 
   UserOutlined,
   CalendarOutlined,
+  GlobalOutlined,
 } from '@ant-design/icons';
 import type { PackageData } from '@/types';
 import PackageList from './PackageList';
@@ -21,6 +22,7 @@ import TrendingFeed from './TrendingFeed';
 import PackageTimeline from './PackageTimeline';
 import DeveloperLeaderboard from './DeveloperLeaderboard';
 import DownloadHeatmap from './DownloadHeatmap';
+import DownloadsGlobe from './DownloadsGlobe';
 import { calculateHealthScore, generateTimeline, calculateDeveloperStats, identifyTrendingPackages } from '@/lib/advancedApi';
 
 interface EnhancedDashboardProps {
@@ -100,6 +102,12 @@ export default function EnhancedDashboard({
               downloads={selectedPackage.stats.downloads}
               packageName={selectedPackage.name}
             />
+
+            {/* Downloads Globe - Full Width */}
+            <DownloadsGlobe
+              selectedPackage={selectedPackage}
+              allPackages={packages}
+            />
           </div>
         </div>
       ),
@@ -115,6 +123,25 @@ export default function EnhancedDashboard({
       children: (
         <div className="h-full">
           <ChartsPanel package={selectedPackage} allPackages={packages} />
+        </div>
+      ),
+    },
+    {
+      key: 'globe',
+      label: (
+        <span className="flex items-center gap-2 text-xs font-mono">
+          <GlobalOutlined />
+          <span className="hidden sm:inline">GLOBE</span>
+        </span>
+      ),
+      children: (
+        <div className="h-full overflow-y-auto custom-scrollbar">
+          <div className="p-4 sm:p-6">
+            <DownloadsGlobe
+              selectedPackage={selectedPackage}
+              allPackages={packages}
+            />
+          </div>
         </div>
       ),
     },
