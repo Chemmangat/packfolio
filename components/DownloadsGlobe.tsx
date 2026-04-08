@@ -6,6 +6,14 @@ import { formatNumber, formatCompactNumber } from '@/lib/utils';
 import { useTheme } from '@/contexts/ThemeContext';
 import type { PackageData } from '@/types';
 
+interface Point {
+  country: string;
+  lat: number;
+  lng: number;
+  weight: number;
+  downloads: number;
+}
+
 const GlobeImpl = dynamic(() => import('./GlobeWrapper'), {
   ssr: false,
   loading: () => (
@@ -50,7 +58,7 @@ const COUNTRY_WEIGHTS = [
 
 function DownloadsGlobe({ selectedPackage, allPackages }: DownloadsGlobeProps) {
   const { theme } = useTheme();
-  const [hovered, setHovered] = useState<typeof COUNTRY_WEIGHTS[0] | null>(null);
+  const [hovered, setHovered] = useState<Point | null>(null);
   const [mode, setMode] = useState<'single' | 'combined'>('single');
 
   const isCombined = mode === 'combined' && allPackages.length > 1;
@@ -66,7 +74,7 @@ function DownloadsGlobe({ selectedPackage, allPackages }: DownloadsGlobeProps) {
     ? `${allPackages.length} packages combined`
     : (selectedPackage?.name ?? '');
 
-  const pointsData = useMemo(() =>
+  const pointsData = useMemo<Point[]>(() =>
     COUNTRY_WEIGHTS.map((c) => ({ ...c, downloads: Math.round(totalDownloads * c.weight) })),
     [totalDownloads]
   );
@@ -91,7 +99,6 @@ function DownloadsGlobe({ selectedPackage, allPackages }: DownloadsGlobeProps) {
           </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Mode toggle */}
           {allPackages.length > 1 && (
             <div className="flex rounded border border-primary overflow-hidden">
               <button
@@ -112,13 +119,11 @@ function DownloadsGlobe({ selectedPackage, allPackages }: DownloadsGlobeProps) {
               </button>
             </div>
           )}
-
-          {/* Hovered country info */}
           {hovered && (
             <div className="text-right">
               <div className="text-xs font-mono text-primary">{hovered.country}</div>
               <div className="text-[10px] font-mono text-accent-primary">
-                ~{formatNumber(Math.round(totalDownloads * hovered.weight))}
+                ~{formatNumber(hovered.downloads)}
               </div>
             </div>
           )}
