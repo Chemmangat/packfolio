@@ -5,7 +5,7 @@
  */
 
 import { memo } from 'react';
-import { RocketOutlined, TrophyOutlined, StarOutlined } from '@ant-design/icons';
+import { RocketOutlined, TrophyOutlined, StarOutlined, CalendarOutlined } from '@ant-design/icons';
 import type { PackageTimeline as TimelineType } from '@/types';
 import { formatCompactNumber, formatRelativeTime } from '@/lib/utils';
 
@@ -22,7 +22,9 @@ function PackageTimeline({ timeline, packageName }: PackageTimelineProps) {
           Package Timeline
         </h3>
         <div className="text-center py-8">
-          <div className="text-3xl mb-2">📅</div>
+          <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-secondary border border-primary flex items-center justify-center">
+            <CalendarOutlined className="text-tertiary text-xl" />
+          </div>
           <p className="text-xs font-mono text-tertiary">
             No timeline events available
           </p>
@@ -39,7 +41,7 @@ function PackageTimeline({ timeline, packageName }: PackageTimelineProps) {
       
       <div className="relative">
         {/* Timeline line */}
-        <div className="absolute left-[15px] top-0 bottom-0 w-px bg-border-primary" />
+        <div className="absolute left-[15px] top-0 bottom-0 w-px" style={{ backgroundColor: 'var(--border-primary)' }} />
         
         <div className="space-y-4">
           {timeline.events.map((event, idx) => (
@@ -88,7 +90,7 @@ function TimelineEvent({ event, isLast }: TimelineEventProps) {
       
       {/* Content */}
       <div className="flex-1 pb-4">
-        <div className="bg-elevated group-hover:bg-secondary border border-primary rounded-lg p-3 transition-all">
+        <div className="bg-elevated group-hover:bg-tertiary border border-primary rounded-lg p-3 transition-colors duration-150">
           <div className="flex items-start justify-between gap-2 mb-1">
             <h4 className="text-xs font-mono font-semibold text-primary">
               {event.title}

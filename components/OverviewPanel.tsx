@@ -29,7 +29,7 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
   const hasMultiplePackages = packages.length > 1;
 
   const StatBox = ({ label, value, color }: { label: string; value: number; color: string }) => (
-    <div className="flex-1 px-2 sm:px-3 py-2 sm:py-3 border-r border-primary last:border-r-0 flex flex-col justify-center min-w-0">
+    <div className="stat-box flex-1 px-2 sm:px-3 py-2 sm:py-3 flex flex-col justify-center min-w-0">
       <Tooltip title={label}>
         <div className="text-[9px] sm:text-[10px] font-mono text-tertiary uppercase tracking-wider mb-1.5 sm:mb-2 whitespace-nowrap truncate">
           {label}
@@ -59,7 +59,7 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
                 href={`https://www.npmjs.com/package/${selectedPackage.name}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-shrink-0 px-2.5 py-1 bg-accent-primary hover:bg-accent-secondary text-white rounded font-mono text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                className="npm-badge"
                 title="View on npm"
               >
                 <LinkOutlined />
@@ -70,21 +70,17 @@ export default function OverviewPanel({ packages, selectedPackage }: OverviewPan
                   href={selectedPackage.repositoryUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-shrink-0 px-2.5 py-1 bg-card hover:bg-elevated border border-primary rounded font-mono text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
-                  title={selectedPackage.githubStars !== undefined ? `${selectedPackage.githubStars.toLocaleString()} stars on GitHub` : "View on GitHub"}
+                  className="gh-badge"
+                  title={selectedPackage.githubStars !== undefined ? `${selectedPackage.githubStars.toLocaleString()} stars on GitHub` : 'View on GitHub'}
                 >
-                  <GithubOutlined className="text-primary" />
+                  <GithubOutlined />
                   {selectedPackage.githubStars !== undefined && (
                     <>
                       <StarOutlined className="text-yellow-500" />
-                      <span className="text-primary font-semibold">
-                        {selectedPackage.githubStars.toLocaleString()}
-                      </span>
+                      <span>{selectedPackage.githubStars.toLocaleString()}</span>
                     </>
                   )}
-                  {selectedPackage.githubStars === undefined && (
-                    <span className="text-primary font-semibold">GitHub</span>
-                  )}
+                  {selectedPackage.githubStars === undefined && <span>GitHub</span>}
                 </a>
               )}
             </div>

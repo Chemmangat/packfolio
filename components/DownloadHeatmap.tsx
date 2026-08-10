@@ -6,6 +6,7 @@
 
 import { memo, useMemo } from 'react';
 import { Tooltip } from 'antd';
+import { CalendarOutlined } from '@ant-design/icons';
 import type { DailyDownload } from '@/types';
 import { formatNumber, formatFullDate } from '@/lib/utils';
 
@@ -81,12 +82,12 @@ function DownloadHeatmap({ downloads, packageName }: DownloadHeatmapProps) {
   
   const getColor = (level: number) => {
     switch (level) {
-      case 0: return 'bg-[#2d2d2d]'; // Visible empty state
-      case 1: return 'bg-[#ef444433]'; // 20% opacity
-      case 2: return 'bg-[#ef444466]'; // 40% opacity
-      case 3: return 'bg-[#ef444499]'; // 60% opacity
-      case 4: return 'bg-[#ef4444]'; // Full opacity
-      default: return 'bg-[#2d2d2d]';
+      case 0: return 'heatmap-cell-0';
+      case 1: return 'heatmap-cell-1';
+      case 2: return 'heatmap-cell-2';
+      case 3: return 'heatmap-cell-3';
+      case 4: return 'heatmap-cell-4';
+      default: return 'heatmap-cell-0';
     }
   };
   
@@ -99,7 +100,9 @@ function DownloadHeatmap({ downloads, packageName }: DownloadHeatmapProps) {
           Download Heatmap
         </h3>
         <div className="text-center py-8">
-          <div className="text-3xl mb-2">📅</div>
+          <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-secondary border border-primary flex items-center justify-center">
+            <CalendarOutlined className="text-tertiary text-xl" />
+          </div>
           <p className="text-xs font-mono text-tertiary">
             No download data available
           </p>
@@ -122,11 +125,11 @@ function DownloadHeatmap({ downloads, packageName }: DownloadHeatmapProps) {
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-mono text-tertiary">Less</span>
           <div className="flex gap-1">
-            <div className="w-3 h-3 rounded-sm bg-[#2d2d2d] border border-[#3d3d3d]" />
-            <div className="w-3 h-3 rounded-sm bg-[#ef444433] border border-[#ef444450]" />
-            <div className="w-3 h-3 rounded-sm bg-[#ef444466] border border-[#ef444470]" />
-            <div className="w-3 h-3 rounded-sm bg-[#ef444499] border border-[#ef444490]" />
-            <div className="w-3 h-3 rounded-sm bg-[#ef4444] border border-[#ef4444]" />
+            <div className="heatmap-cell-0 w-3 h-3 rounded-sm" />
+            <div className="heatmap-cell-1 w-3 h-3 rounded-sm" />
+            <div className="heatmap-cell-2 w-3 h-3 rounded-sm" />
+            <div className="heatmap-cell-3 w-3 h-3 rounded-sm" />
+            <div className="heatmap-cell-4 w-3 h-3 rounded-sm" />
           </div>
           <span className="text-[10px] font-mono text-tertiary">More</span>
         </div>
@@ -189,7 +192,7 @@ function DownloadHeatmap({ downloads, packageName }: DownloadHeatmapProps) {
                       }
                     >
                       <div
-                        className={`w-3 h-3 rounded-sm ${getColor(day.level)} border border-[#3d3d3d] hover:ring-2 hover:ring-accent-primary hover:scale-110 transition-all cursor-default`}
+                        className={`w-3 h-3 rounded-sm ${getColor(day.level)} hover:ring-1 hover:ring-accent-primary hover:scale-110 transition-transform duration-100 cursor-default`}
                       />
                     </Tooltip>
                   );

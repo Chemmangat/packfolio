@@ -23,7 +23,9 @@ function DependencyGraph({ dependencies, packageName }: DependencyGraphProps) {
           Dependencies
         </h3>
         <div className="text-center py-8">
-          <div className="text-3xl mb-2">🕸️</div>
+          <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-secondary border border-primary flex items-center justify-center">
+            <ApiOutlined className="text-tertiary text-xl" />
+          </div>
           <p className="text-xs font-mono text-tertiary">
             No dependencies found
           </p>
@@ -89,7 +91,7 @@ function DependencyGraph({ dependencies, packageName }: DependencyGraphProps) {
             {deps.slice(0, 10).map((dep, idx) => (
               <div
                 key={dep}
-                className="flex items-center gap-2 bg-card border border-primary rounded px-3 py-2 hover:bg-secondary hover:border-accent-cyan/50 transition-all group"
+            className="flex items-center gap-2 bg-card border border-primary rounded px-3 py-2 hover:bg-secondary transition-colors group"
               >
                 <div className="w-1.5 h-1.5 rounded-full bg-blue-400" />
                 <span className="text-xs font-mono text-secondary group-hover:text-primary flex-1 truncate">

@@ -5,7 +5,7 @@
  */
 
 import { memo } from 'react';
-import { RiseOutlined, RocketOutlined, StarOutlined } from '@ant-design/icons';
+import { RiseOutlined, FireOutlined, LineChartOutlined, ThunderboltOutlined, BarChartOutlined } from '@ant-design/icons';
 import type { TrendingPackage } from '@/types';
 import { formatCompactNumber } from '@/lib/utils';
 
@@ -17,11 +17,13 @@ function TrendingFeed({ trending }: TrendingFeedProps) {
   if (trending.length === 0) {
     return (
       <div className="bg-card border border-primary rounded-lg p-6">
-        <h3 className="text-xs font-mono text-tertiary uppercase tracking-wider mb-4">
+        <h3 className="card-header mb-4">
           Trending Now
         </h3>
         <div className="text-center py-8">
-          <div className="text-3xl mb-2">📊</div>
+          <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-secondary border border-primary flex items-center justify-center">
+            <BarChartOutlined className="text-tertiary text-xl" />
+          </div>
           <p className="text-xs font-mono text-tertiary">
             No trending packages detected
           </p>
@@ -62,9 +64,9 @@ interface TrendingItemProps {
 function TrendingItem({ package: pkg, rank }: TrendingItemProps) {
   const getCategoryIcon = () => {
     switch (pkg.category) {
-      case 'hot': return <span className="text-base">🔥</span>;
-      case 'rising': return <span className="text-base">📈</span>;
-      case 'dark-horse': return <span className="text-base">🌟</span>;
+      case 'hot': return <FireOutlined className="text-red-400" />;
+      case 'rising': return <LineChartOutlined className="text-blue-400" />;
+      case 'dark-horse': return <ThunderboltOutlined className="text-purple-400" />;
     }
   };
   
@@ -76,22 +78,30 @@ function TrendingItem({ package: pkg, rank }: TrendingItemProps) {
     }
   };
   
-  const getCategoryColor = () => {
+  const getCategoryStyle = (): React.CSSProperties => {
     switch (pkg.category) {
-      case 'hot': return 'text-red-400 bg-red-500/15 border border-red-500/30';
-      case 'rising': return 'text-blue-400 bg-blue-500/15 border border-blue-500/30';
-      case 'dark-horse': return 'text-purple-400 bg-purple-500/15 border border-purple-500/30';
+      case 'hot':        return { background: 'rgba(248,113,113,0.12)', border: '1px solid rgba(248,113,113,0.30)' };
+      case 'rising':     return { background: 'rgba(96,165,250,0.12)',  border: '1px solid rgba(96,165,250,0.30)' };
+      case 'dark-horse': return { background: 'rgba(167,139,250,0.12)', border: '1px solid rgba(167,139,250,0.30)' };
+    }
+  };
+
+  const getCategoryTextColor = () => {
+    switch (pkg.category) {
+      case 'hot':        return 'text-red-400';
+      case 'rising':     return 'text-blue-400';
+      case 'dark-horse': return 'text-purple-400';
     }
   };
   
   return (
-    <div className="group bg-elevated hover:bg-secondary border border-primary rounded-lg p-3 transition-all cursor-default">
+    <div className="group feed-item p-3 transition-all cursor-default">
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0 w-6 text-center">
           <span className="text-xs font-mono font-bold text-tertiary">#{rank}</span>
         </div>
         
-        <div className="flex-shrink-0 text-center">
+        <div className="flex-shrink-0 flex items-center justify-center w-5">
           {getCategoryIcon()}
         </div>
         
@@ -100,7 +110,10 @@ function TrendingItem({ package: pkg, rank }: TrendingItemProps) {
             <h4 className="text-xs font-mono font-semibold text-primary truncate">
               {pkg.name}
             </h4>
-            <div className={`flex-shrink-0 px-2 py-0.5 rounded text-[9px] font-mono font-semibold ${getCategoryColor()}`}>
+            <div
+              className={`flex-shrink-0 px-2 py-0.5 rounded text-[9px] font-mono font-semibold ${getCategoryTextColor()}`}
+              style={getCategoryStyle()}
+            >
               {getCategoryLabel()}
             </div>
           </div>

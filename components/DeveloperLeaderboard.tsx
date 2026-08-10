@@ -5,7 +5,7 @@
  */
 
 import { memo } from 'react';
-import { TrophyOutlined, RocketOutlined, StarOutlined, DownloadOutlined } from '@ant-design/icons';
+import { TrophyOutlined, RocketOutlined, StarOutlined, DownloadOutlined, CrownOutlined, RiseOutlined } from '@ant-design/icons';
 import type { DeveloperStats } from '@/types';
 import { formatCompactNumber } from '@/lib/utils';
 
@@ -13,16 +13,38 @@ interface DeveloperLeaderboardProps {
   stats: DeveloperStats;
 }
 
+interface RankBadge {
+  icon: React.ReactNode;
+  label: string;
+  textColor: string;
+  style: React.CSSProperties;
+}
+
 function DeveloperLeaderboard({ stats }: DeveloperLeaderboardProps) {
-  const getRankBadge = () => {
+  const getRankBadge = (): RankBadge => {
     const { impactScore } = stats;
-    if (impactScore > 10000) return { emoji: '👑', label: 'Legend', color: 'text-yellow-400 bg-yellow-500/15 border border-yellow-500/30' };
-    if (impactScore > 1000) return { emoji: '🏆', label: 'Elite', color: 'text-purple-400 bg-purple-500/15 border border-purple-500/30' };
-    if (impactScore > 100) return { emoji: '⭐', label: 'Pro', color: 'text-blue-400 bg-blue-500/15 border border-blue-500/30' };
-    if (impactScore > 10) return { emoji: '🌟', label: 'Rising', color: 'text-green-400 bg-green-500/15 border border-green-500/30' };
-    return { emoji: '🚀', label: 'Starter', color: 'text-gray-400 bg-gray-500/15 border border-gray-500/30' };
+    if (impactScore > 10000) return {
+      icon: <CrownOutlined />, label: 'Legend', textColor: 'text-yellow-400',
+      style: { background: 'rgba(234,179,8,0.12)', border: '1px solid rgba(234,179,8,0.30)' },
+    };
+    if (impactScore > 1000) return {
+      icon: <TrophyOutlined />, label: 'Elite', textColor: 'text-purple-400',
+      style: { background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.30)' },
+    };
+    if (impactScore > 100) return {
+      icon: <StarOutlined />, label: 'Pro', textColor: 'text-blue-400',
+      style: { background: 'rgba(96,165,250,0.12)', border: '1px solid rgba(96,165,250,0.30)' },
+    };
+    if (impactScore > 10) return {
+      icon: <RiseOutlined />, label: 'Rising', textColor: 'text-green-400',
+      style: { background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.30)' },
+    };
+    return {
+      icon: <RocketOutlined />, label: 'Starter', textColor: 'text-secondary',
+      style: { background: 'rgba(156,163,175,0.12)', border: '1px solid rgba(156,163,175,0.30)' },
+    };
   };
-  
+
   const badge = getRankBadge();
   
   return (
@@ -41,26 +63,30 @@ function DeveloperLeaderboard({ stats }: DeveloperLeaderboardProps) {
           <h4 className="text-lg font-mono font-bold text-primary mb-1">
             {stats.username}
           </h4>
-          <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${badge.color}`}>
-            <span className="text-base">{badge.emoji}</span>
-            <span className="text-xs font-mono font-semibold">
-              {badge.label}
-            </span>
+          <div
+            className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${badge.textColor}`}
+            style={badge.style}
+          >
+            <span className="text-sm">{badge.icon}</span>
+            <span className="text-xs font-mono font-semibold">{badge.label}</span>
           </div>
         </div>
       </div>
       
       {/* Impact Score */}
-      <div className="bg-gradient-to-br from-accent-primary/15 to-accent-secondary/15 border border-accent-primary/40 rounded-lg p-4 mb-4">
+      <div className="rounded-xl p-4 mb-4" style={{
+        background: 'linear-gradient(135deg, rgba(239,68,68,0.1) 0%, rgba(220,38,38,0.05) 100%)',
+        border: '1px solid rgba(239,68,68,0.25)',
+      }}>
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-mono text-secondary">Impact Score</span>
-          <TrophyOutlined className="text-accent-primary text-lg" />
+          <span className="text-[10px] font-mono text-secondary uppercase tracking-wider">Impact Score</span>
+          <TrophyOutlined className="text-accent-primary" />
         </div>
-        <div className="text-3xl font-bold font-mono text-accent-primary">
+        <div className="text-3xl font-bold font-mono text-accent-primary tracking-tight">
           {formatCompactNumber(stats.impactScore)}
         </div>
         <p className="text-[10px] font-mono text-tertiary mt-1">
-          Based on downloads & stars
+          Weighted by downloads &amp; community stars
         </p>
       </div>
       

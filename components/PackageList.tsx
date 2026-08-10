@@ -89,10 +89,10 @@ export default function PackageList({
             >
               <button
                 onClick={() => onSelect(pkg)}
-                className={`w-full text-left p-3 rounded border transition-all cursor-pointer ${
+                className={`w-full text-left p-3 rounded-lg border transition-all cursor-pointer ${
                   selectedPackage.name === pkg.name
-                    ? 'bg-accent-primary/20 border-accent-primary shadow-lg'
-                    : 'bg-secondary border-primary hover:border-secondary hover:bg-tertiary'
+                    ? 'pkg-item pkg-item--active shadow-sm'
+                    : 'pkg-item'
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
@@ -114,7 +114,7 @@ export default function PackageList({
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="flex-shrink-0 p-1.5 rounded hover:bg-accent-primary/10 transition-colors text-secondary hover:text-accent-primary cursor-pointer"
+                    className="npm-icon-btn"
                     title="View on npm"
                   >
                     <LinkOutlined className="text-sm" />

@@ -74,12 +74,21 @@ export default function LoadingAnimation({ onComplete }: LoadingAnimationProps) 
           
           {/* Simple rotating ring */}
           <div className="relative w-16 h-16">
-            <div className="absolute inset-0 border-2 border-border-primary rounded-full opacity-20"></div>
+            <div className="absolute inset-0 rounded-full opacity-20" style={{ border: '2px solid var(--border-primary)' }}></div>
             <div className="absolute inset-0 border-2 border-transparent border-t-accent-primary rounded-full animate-spin"></div>
             
             {/* Center icon */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-2xl opacity-60">📦</div>
+              <div className="w-6 h-6 text-accent-primary opacity-60">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l2-1.14"/>
+                  <path d="M16.5 9.4 7.55 4.24"/>
+                  <polyline points="3.29 7 12 12 20.71 7"/>
+                  <line x1="12" x2="12" y1="22" y2="12"/>
+                  <circle cx="18.5" cy="15.5" r="2.5"/>
+                  <path d="M20.27 17.27 22 19"/>
+                </svg>
+              </div>
             </div>
           </div>
         </div>
@@ -114,7 +123,7 @@ export default function LoadingAnimation({ onComplete }: LoadingAnimationProps) 
                     <span className="inline-block w-6 text-accent-primary">{dots}</span>
                   )}
                   {idx < messageIndex && (
-                    <span className="text-accent-green text-sm">✓</span>
+                    <span className="text-accent-green text-sm font-bold">✓</span>
                   )}
                 </div>
               ))}

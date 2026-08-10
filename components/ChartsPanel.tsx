@@ -1,5 +1,6 @@
 import { useState, useMemo, memo } from 'react';
 import { Tabs } from 'antd';
+import { BarChartOutlined } from '@ant-design/icons';
 import { LineChart, Line, BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import type { PackageData, TimeRange } from '@/types';
 import { config } from '@/lib/config';
@@ -76,7 +77,7 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
   const colors = chartColors;
 
   const TimeRangeButtons = () => (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex gap-1.5">
       {[
         { label: '7D', value: '7' },
         { label: '30D', value: '30' },
@@ -86,11 +87,7 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
         <button
           key={option.value}
           onClick={() => setTimeRange(option.value as TimeRange)}
-          className={`px-3 sm:px-4 py-1.5 text-xs font-mono rounded border transition-all cursor-pointer ${
-            timeRange === option.value
-              ? 'bg-accent-primary border-accent-primary text-white shadow-lg'
-              : 'bg-elevated border-primary text-secondary hover:border-secondary hover:text-primary'
-          }`}
+          className={`time-btn ${timeRange === option.value ? 'time-btn-active' : ''}`}
         >
           {option.label}
         </button>
@@ -101,7 +98,7 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
   const tabItems = [
     {
       key: 'trend',
-      label: <span className="font-mono text-xs">TREND</span>,
+      label: <span className="font-mono text-[11px] font-medium tracking-wider">TREND</span>,
       children: (
         <div className="h-full min-h-[180px] lg:min-h-0 p-3 sm:p-6 bg-card flex flex-col">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 flex-shrink-0">
@@ -170,7 +167,7 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
     },
     {
       key: 'comparison',
-      label: <span className="font-mono text-xs">COMPARISON</span>,
+      label: <span className="font-mono text-[11px] font-medium tracking-wider">COMPARISON</span>,
       children: (
         <div className="h-full min-h-[180px] lg:min-h-0 p-3 sm:p-6 bg-card flex flex-col">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 flex-shrink-0">
@@ -261,7 +258,9 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
             ) : (
               <div className="h-full flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-4xl mb-3">📊</div>
+                  <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-secondary border border-primary flex items-center justify-center">
+                    <BarChartOutlined className="text-tertiary text-xl" />
+                  </div>
                   <p className="text-secondary font-mono text-sm">
                     Comparison requires multiple packages
                   </p>
@@ -277,7 +276,7 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
     },
     {
       key: 'distribution',
-      label: <span className="font-mono text-xs">DISTRIBUTION</span>,
+      label: <span className="font-mono text-[11px] font-medium tracking-wider">DISTRIBUTION</span>,
       children: (
         <div className="h-full min-h-[230px] lg:min-h-0 p-3 sm:p-6 bg-card flex flex-col">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 flex-shrink-0">
@@ -343,7 +342,9 @@ function ChartsPanel({ package: pkg, allPackages }: ChartsPanelProps) {
             ) : (
               <div className="h-full flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-4xl mb-3">📊</div>
+                  <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-secondary border border-primary flex items-center justify-center">
+                    <BarChartOutlined className="text-tertiary text-xl" />
+                  </div>
                   <p className="text-secondary font-mono text-sm">
                     Distribution requires multiple packages
                   </p>

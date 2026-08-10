@@ -1,13 +1,14 @@
+'use client';
+
 /**
  * Contribute Modal Component
  * 
- * A professional and humble way to accept contributions for hosting costs.
+ * An ultra-premium, theme-aware donation modal.
+ * Clean, spacious, and professionally crafted.
  */
 
-'use client';
-
 import { Modal, Button, message } from 'antd';
-import { HeartOutlined, CopyOutlined } from '@ant-design/icons';
+import { HeartOutlined, CopyOutlined, CheckOutlined, QrcodeOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 
 interface ContributeModalProps {
@@ -22,7 +23,11 @@ export default function ContributeModal({ open, onClose }: ContributeModalProps)
   const handleCopyUPI = () => {
     navigator.clipboard.writeText(upiId);
     setCopied(true);
-    message.success('UPI ID copied to clipboard!');
+    message.success({
+      content: 'UPI ID copied to clipboard!',
+      duration: 2,
+      style: { borderRadius: 8 },
+    });
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -31,75 +36,164 @@ export default function ContributeModal({ open, onClose }: ContributeModalProps)
       open={open}
       onCancel={onClose}
       footer={null}
-      width={500}
+      width={480}
       centered
       className="contribute-modal"
+      style={{ 
+        borderRadius: 20,
+        overflow: 'hidden',
+      }}
+      bodyStyle={{ padding: 0, background: 'transparent' }}
+      maskStyle={{ backdropFilter: 'blur(4px)', background: 'rgba(0,0,0,0.3)' }}
     >
-      <div className="text-center py-4">
-        {/* Header */}
-        <div className="mb-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-accent-primary/10 mb-4">
-            <HeartOutlined className="text-3xl text-accent-primary" />
+      <div 
+        className="p-8"
+        style={{ 
+          background: 'var(--bg-primary)',
+          borderRadius: 20,
+          border: '1px solid var(--border-primary)',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.08)',
+        }}
+      >
+        {/* Decorative top accent */}
+        <div 
+          className="absolute top-0 left-0 right-0 h-1"
+          style={{
+            background: 'linear-gradient(90deg, var(--accent-primary), #f59e0b, var(--accent-primary))',
+            backgroundSize: '200% 100%',
+            animation: 'gradientMove 3s ease infinite',
+            borderRadius: '20px 20px 0 0',
+          }}
+        />
+
+        {/* Icon */}
+        <div className="text-center mb-6">
+          <div 
+            className="inline-flex items-center justify-center w-16 h-16 rounded-full"
+            style={{ 
+              background: 'linear-gradient(135deg, var(--accent-primary), #dc2626)',
+              boxShadow: '0 8px 24px rgba(239,68,68,0.25)',
+            }}
+          >
+            <HeartOutlined className="text-3xl text-white" />
           </div>
-          <h2 className="text-2xl font-bold font-mono mb-2" style={{ color: '#0a0a0a' }}>
-            Support This Project
+        </div>
+
+        {/* Heading */}
+        <div className="text-center mb-6">
+          <h2 
+            className="text-2xl font-semibold font-mono tracking-tight mb-1"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            Support PackFolio
           </h2>
-          <p className="text-sm leading-relaxed max-w-md mx-auto" style={{ color: '#525252' }}>
-            PackFolio is free and open-source. If you find this tool valuable, 
-            you can help cover the hosting and domain costs to keep it running for everyone.
+          <p 
+            className="text-sm font-mono leading-relaxed"
+            style={{ color: 'var(--text-secondary)' }}
+          >
+            Free and open source. Your contribution helps cover hosting and domain costs.
           </p>
         </div>
 
         {/* QR Code */}
-        <div className="mb-6">
-          <div className="inline-block p-4 bg-white rounded-lg shadow-lg">
+        <div className="flex justify-center mb-6">
+          <div 
+            className="p-3 rounded-2xl"
+            style={{ 
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-primary)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+            }}
+          >
             <img
               src="/upi-qr-code.jpg"
-              alt="Official UPI QR Code"
-              className="w-48 h-48"
+              alt="UPI QR Code for donation"
+              className="w-44 h-44 rounded-xl"
               onError={(e) => {
-                // Fallback to generated QR if official image not found
                 e.currentTarget.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=${upiId}&pn=PackFolio&cu=INR`;
               }}
+              style={{ display: 'block' }}
             />
           </div>
-          <p className="text-xs mt-2 font-mono" style={{ color: '#737373' }}>
-            Scan with any UPI app
-          </p>
         </div>
 
-        {/* UPI ID */}
+        {/* UPI ID with copy */}
         <div className="mb-6">
-          <p className="text-xs uppercase tracking-wider mb-2 font-mono" style={{ color: '#737373' }}>
-            UPI ID
-          </p>
-          <div className="flex items-center justify-center gap-2">
-            <code className="px-4 py-2 rounded-lg font-mono text-sm" style={{ 
-              backgroundColor: 'var(--bg-card)', 
-              border: '1px solid var(--border-primary)',
-              color: 'var(--text-primary)'
-            }}>
-              {upiId}
-            </code>
+          <div className="flex items-center justify-center gap-3">
+            <div 
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl flex-1 max-w-sm"
+              style={{ 
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border-primary)',
+              }}
+            >
+              <QrcodeOutlined style={{ color: 'var(--text-tertiary)', fontSize: 14 }} />
+              <code 
+                className="font-mono text-sm truncate"
+                style={{ color: 'var(--text-primary)' }}
+              >
+                {upiId}
+              </code>
+            </div>
             <Button
-              icon={<CopyOutlined />}
+              icon={copied ? <CheckOutlined /> : <CopyOutlined />}
               onClick={handleCopyUPI}
               className="theme-toggle"
-              title="Copy UPI ID"
+              style={{
+                height: 42,
+                padding: '0 18px',
+                borderRadius: 10,
+                borderColor: 'var(--border-primary)',
+                color: 'var(--text-secondary)',
+                fontWeight: 500,
+                fontSize: 13,
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'var(--accent-primary)';
+                e.currentTarget.style.color = 'var(--accent-primary)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'var(--border-primary)';
+                e.currentTarget.style.color = 'var(--text-secondary)';
+              }}
             >
-              {copied ? 'Copied!' : 'Copy'}
+              {copied ? 'Copied' : 'Copy'}
             </Button>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="pt-4" style={{ borderTop: '1px solid var(--border-primary)' }}>
-          <p className="text-xs leading-relaxed" style={{ color: '#737373' }}>
-            Your contribution helps maintain this service and keep it accessible to the community. 
-            Thank you for your support.
+        {/* Footer note */}
+        <div className="text-center pt-4 border-t border-primary">
+          <p 
+            className="text-xs font-mono leading-relaxed"
+            style={{ color: 'var(--text-tertiary)' }}
+          >
+            Every contribution, no matter the size, helps keep this service running.
+            <br />
+            <span style={{ color: 'var(--text-secondary)' }}>Thank you for your generosity.</span>
           </p>
         </div>
       </div>
+
+      <style jsx global>{`
+        @keyframes gradientMove {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        .contribute-modal .ant-modal-content {
+          background: transparent !important;
+          box-shadow: none !important;
+        }
+        .contribute-modal .ant-modal-close {
+          top: 16px;
+          right: 16px;
+          color: var(--text-secondary);
+        }
+        .contribute-modal .ant-modal-close:hover {
+          color: var(--text-primary);
+        }
+      `}</style>
     </Modal>
   );
 }

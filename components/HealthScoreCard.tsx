@@ -6,6 +6,7 @@
 
 import { memo } from 'react';
 import { Tooltip } from 'antd';
+import { RiseOutlined, FallOutlined, CheckCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import type { HealthScore } from '@/types';
 
 interface HealthScoreCardProps {
@@ -14,21 +15,21 @@ interface HealthScoreCardProps {
 }
 
 function HealthScoreCard({ healthScore, packageName }: HealthScoreCardProps) {
-  const { score, trend, badge, factors } = healthScore;
+  const { score, trend, factors } = healthScore;
   
-  // Determine color based on score
+  // Score badge background + border style — inline to avoid broken Tailwind v4 opacity modifiers
+  const getScoreBadgeStyle = (s: number): React.CSSProperties => {
+    if (s >= 80) return { background: 'rgba(74,222,128,0.12)', border: '1px solid rgba(74,222,128,0.30)' };
+    if (s >= 60) return { background: 'rgba(96,165,250,0.12)', border: '1px solid rgba(96,165,250,0.30)' };
+    if (s >= 40) return { background: 'rgba(250,204,21,0.12)',  border: '1px solid rgba(250,204,21,0.30)' };
+    return             { background: 'rgba(248,113,113,0.12)', border: '1px solid rgba(248,113,113,0.30)' };
+  };
+
   const getScoreColor = (s: number) => {
     if (s >= 80) return 'text-green-400';
     if (s >= 60) return 'text-blue-400';
     if (s >= 40) return 'text-yellow-400';
     return 'text-red-400';
-  };
-  
-  const getScoreBg = (s: number) => {
-    if (s >= 80) return 'bg-green-500/15 border-green-500/30';
-    if (s >= 60) return 'bg-blue-500/15 border-blue-500/30';
-    if (s >= 40) return 'bg-yellow-500/15 border-yellow-500/30';
-    return 'bg-red-500/15 border-red-500/30';
   };
   
   const getScoreStroke = (s: number) => {
@@ -38,6 +39,15 @@ function HealthScoreCard({ healthScore, packageName }: HealthScoreCardProps) {
     return '#f87171';
   };
   
+  const getTrendIcon = (t: HealthScore['trend']) => {
+    switch (t) {
+      case 'growing': return <RiseOutlined className="text-green-400" />;
+      case 'stable': return <CheckCircleOutlined className="text-blue-400" />;
+      case 'declining': return <FallOutlined className="text-red-400" />;
+      case 'stale': return <ExclamationCircleOutlined className="text-yellow-400" />;
+    }
+  };
+
   const getTrendLabel = (t: HealthScore['trend']) => {
     switch (t) {
       case 'growing': return 'Growing';
@@ -58,7 +68,9 @@ function HealthScoreCard({ healthScore, packageName }: HealthScoreCardProps) {
             {packageName}
           </p>
         </div>
-        <div className="text-2xl">{badge}</div>
+        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-elevated border border-primary flex items-center justify-center">
+          {getTrendIcon(trend)}
+        </div>
       </div>
       
       {/* Score Gauge */}
@@ -96,13 +108,17 @@ function HealthScoreCard({ healthScore, packageName }: HealthScoreCardProps) {
         </div>
         
         <div className="flex-1">
-          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border ${getScoreBg(score)} mb-2`}>
-            <span className={`text-xs font-mono font-semibold ${getScoreColor(score)}`}>
+          <div
+            className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-3`}
+            style={getScoreBadgeStyle(score)}
+          >
+            <span className="text-sm">{getTrendIcon(trend)}</span>
+            <span className={`text-xs font-mono font-semibold tracking-wide ${getScoreColor(score)}`}>
               {getTrendLabel(trend)}
             </span>
           </div>
           <p className="text-[10px] font-mono text-tertiary leading-relaxed">
-            Based on downloads, freshness, popularity & maintenance
+            Based on downloads, freshness, popularity &amp; maintenance
           </p>
         </div>
       </div>
@@ -131,13 +147,16 @@ function FactorBar({ label, value, max }: FactorBarProps) {
     <Tooltip title={`${value}/${max} points`}>
       <div className="group cursor-default">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-[10px] font-mono text-secondary">{label}</span>
-          <span className="text-[10px] font-mono text-tertiary">{value}/{max}</span>
+          <span className="text-[10px] font-mono text-secondary tracking-wide">{label}</span>
+          <span className="text-[10px] font-mono text-tertiary tabular-nums">{value}/{max}</span>
         </div>
-        <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+        <div className="h-1.5 bg-tertiary rounded-full overflow-hidden">
           <div
-            className="h-full bg-accent-primary transition-all duration-300 group-hover:bg-accent-secondary"
-            style={{ width: `${percentage}%` }}
+            className="h-full rounded-full transition-all duration-500 ease-out"
+            style={{
+              width: `${percentage}%`,
+              background: `linear-gradient(90deg, var(--accent-secondary), var(--accent-primary))`,
+            }}
           />
         </div>
       </div>

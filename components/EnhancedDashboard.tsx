@@ -70,7 +70,7 @@ export default function EnhancedDashboard({
     {
       key: 'overview',
       label: (
-        <span className="flex items-center gap-2 text-xs font-mono">
+        <span className="flex items-center gap-1.5 text-[11px] font-mono font-medium tracking-wider">
           <DashboardOutlined />
           <span className="hidden sm:inline">OVERVIEW</span>
         </span>
@@ -115,7 +115,7 @@ export default function EnhancedDashboard({
     {
       key: 'charts',
       label: (
-        <span className="flex items-center gap-2 text-xs font-mono">
+        <span className="flex items-center gap-1.5 text-[11px] font-mono font-medium tracking-wider">
           <LineChartOutlined />
           <span className="hidden sm:inline">CHARTS</span>
         </span>
@@ -129,7 +129,7 @@ export default function EnhancedDashboard({
     {
       key: 'globe',
       label: (
-        <span className="flex items-center gap-2 text-xs font-mono">
+        <span className="flex items-center gap-1.5 text-[11px] font-mono font-medium tracking-wider">
           <GlobalOutlined />
           <span className="hidden sm:inline">GLOBE</span>
         </span>
@@ -148,7 +148,7 @@ export default function EnhancedDashboard({
     {
       key: 'timeline',
       label: (
-        <span className="flex items-center gap-2 text-xs font-mono">
+        <span className="flex items-center gap-1.5 text-[11px] font-mono font-medium tracking-wider">
           <CalendarOutlined />
           <span className="hidden sm:inline">TIMELINE</span>
         </span>
@@ -169,7 +169,7 @@ export default function EnhancedDashboard({
     {
       key: 'developer',
       label: (
-        <span className="flex items-center gap-2 text-xs font-mono">
+        <span className="flex items-center gap-1.5 text-[11px] font-mono font-medium tracking-wider">
           <UserOutlined />
           <span className="hidden sm:inline">DEVELOPER</span>
         </span>
@@ -181,7 +181,9 @@ export default function EnhancedDashboard({
               <DeveloperLeaderboard stats={developerStats} />
             ) : (
               <div className="bg-card border border-primary rounded-lg p-6 text-center">
-                <div className="text-3xl mb-2">👤</div>
+                <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-secondary border border-primary flex items-center justify-center">
+                  <UserOutlined className="text-tertiary text-xl" />
+                </div>
                 <p className="text-xs font-mono text-tertiary">
                   Developer stats not available
                 </p>

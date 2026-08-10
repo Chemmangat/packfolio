@@ -100,20 +100,16 @@ function DownloadsGlobe({ selectedPackage, allPackages }: DownloadsGlobeProps) {
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {allPackages.length > 1 && (
-            <div className="flex rounded border border-primary overflow-hidden">
+            <div className="flex rounded-lg border border-primary overflow-hidden">
               <button
                 onClick={() => setMode('single')}
-                className={`px-2.5 py-1 text-[10px] font-mono transition-colors cursor-pointer ${
-                  mode === 'single' ? 'bg-accent-primary text-white' : 'bg-elevated text-tertiary hover:text-primary'
-                }`}
+                className={`globe-toggle ${mode === 'single' ? 'globe-toggle-active' : 'globe-toggle-inactive'}`}
               >
                 Single
               </button>
               <button
                 onClick={() => setMode('combined')}
-                className={`px-2.5 py-1 text-[10px] font-mono transition-colors cursor-pointer ${
-                  mode === 'combined' ? 'bg-accent-primary text-white' : 'bg-elevated text-tertiary hover:text-primary'
-                }`}
+                className={`globe-toggle border-l border-primary ${mode === 'combined' ? 'globe-toggle-active' : 'globe-toggle-inactive'}`}
               >
                 Combined
               </button>
