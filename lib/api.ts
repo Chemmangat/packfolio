@@ -160,8 +160,7 @@ export async function fetchUserPackages(username: string) {
  */
 async function fetchDirectPackage(packageName: string) {
   try {
-    const pkgName = packageName.startsWith('@') ? packageName : `@${packageName}`;
-    const url = `${config.api.registryPackage}/${encodeURIComponent(pkgName)}`;
+    const url = `${config.api.registryPackage}/${encodeURIComponent(packageName)}`;
     
     const response = await fetch(url);
     if (!response.ok) return null;
@@ -182,6 +181,10 @@ async function fetchDirectPackage(packageName: string) {
     console.error('Direct package lookup failed:', error);
     return null;
   }
+}
+
+export async function fetchPackageByName(packageName: string) {
+  return await fetchDirectPackage(packageName);
 }
 
 /**
