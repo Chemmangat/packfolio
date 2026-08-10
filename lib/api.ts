@@ -298,7 +298,8 @@ async function fetchDownloadRange(packageName: string, days: number): Promise<Da
   
   const startDate = getDateDaysAgo(days);
   const endDate = getToday();
-  const url = `${config.api.downloadsApi}/range/${startDate}:${endDate}/${packageName}`;
+  const encodedPackageName = encodeURIComponent(packageName);
+  const url = `${config.api.downloadsApi}/range/${startDate}:${endDate}/${encodedPackageName}`;
   
   try {
     const response = await fetch(url);

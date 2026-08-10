@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import PackfolioBadge from "@/components/PackfolioBadge";
 import { fetchPackageByName, fetchPackageStats, fetchGitHubStarsForPackage } from "@/lib/api";
 import { calculateHealthScore } from "@/lib/advancedApi";
-import type { PackageData } from "@/types";
+import type { PackageData, PackageStats } from "@/types";
 
 interface BadgePageProps {
   params: {
@@ -29,21 +30,61 @@ export default async function BadgePage({ params }: BadgePageProps) {
           <h1 className="text-2xl font-semibold text-slate-900">Badge not found</h1>
           <p className="mt-4 text-sm text-slate-600">
             We could not resolve the package <span className="font-mono text-slate-800">{packageName}</span>.
-            Please check that the package exists and try again.
           </p>
+          <div className="mt-6 inline-flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <Link
+              href="/"
+              className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+            >
+              Back to Packfolio
+            </Link>
+            <a
+              href={`https://www.npmjs.com/package/${encodeURIComponent(packageName)}`}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+            >
+              View on npm
+            </a>
+          </div>
         </div>
       </div>
     );
   }
 
-  const stats = await fetchPackageStats(pkg.name);
-  const githubStars = await fetchGitHubStarsForPackage(pkg.name, pkg.repositoryUrl);
+  let stats: PackageStats = {
+    daily: 0,
+    weekly: 0,
+    monthly: 0,
+    allTime: 0,
+    downloads: [],
+  };
+  let githubStars: number | undefined = undefined;
+
+  try {
+    stats = await fetchPackageStats(pkg.name);
+  } catch (error) {
+    console.warn(`Badge route: failed to fetch stats for ${pkg.name}`, error);
+  }
+
+  try {
+    githubStars = await fetchGitHubStarsForPackage(pkg.name, pkg.repositoryUrl);
+  } catch (error) {
+    console.warn(`Badge route: failed to fetch GitHub stars for ${pkg.name}`, error);
+  }
+
   const packageData: PackageData = {
     ...pkg,
     stats,
     githubStars,
   };
-  const healthScore = calculateHealthScore(packageData);
+
+  let healthScore = undefined;
+  try {
+    healthScore = calculateHealthScore(packageData);
+  } catch (error) {
+    console.warn(`Badge route: failed to calculate health score for ${pkg.name}`, error);
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 py-16 px-4">
