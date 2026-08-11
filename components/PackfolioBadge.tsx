@@ -60,12 +60,12 @@ const Stat = memo(function Stat({
 
   return (
     <div className="space-y-1">
-      <div className="text-xs font-mono uppercase tracking-widest text-gray-500">
+      <div className="text-xs font-mono uppercase tracking-widest text-slate-500">
         {label}
       </div>
-      <div className="text-xl font-extrabold text-black">{value}</div>
+      <div className="text-xl font-extrabold text-slate-950">{value}</div>
       {typeof barPercentage === "number" && (
-        <div className="mt-1.5 h-2 w-full rounded-full bg-gray-200 overflow-hidden shadow-inner">
+        <div className="mt-1.5 h-2 w-full rounded-full bg-slate-200 overflow-hidden shadow-inner">
           <div
             className={`h-full rounded-full ${barColor} transition-all duration-500 ease-out shadow-sm`}
             style={{ width: `${clamped}%` }}
@@ -83,7 +83,7 @@ const Stat = memo(function Stat({
 Stat.displayName = "Stat";
 
 // ------------------------------------------------------------------
-// SVG Generator – with pure white background & high contrast
+// SVG Generator – uses CSS variables for theming
 // ------------------------------------------------------------------
 
 function generateBadgeSvg(pkg: PackageData, healthScore?: HealthScore): string {
@@ -107,15 +107,15 @@ function generateBadgeSvg(pkg: PackageData, healthScore?: HealthScore): string {
     : "Unknown";
   const certId = `PKF-${Date.now().toString(36).toUpperCase()}-${name.slice(0, 4).toUpperCase()}`;
 
-  // High‑contrast palette for SVG
+  // Use high-contrast colors for SVG (always renders consistently)
   const colors = {
-    bg: "#ffffff",
-    border: "#d1d5db",
-    primaryText: "#000000",
-    secondaryText: "#1a1a1a",
-    tertiaryText: "#4b5563",
-    barBg: "#e5e7eb",
-    barFill: "#22c55e",
+    bg: "#eef2ff",
+    border: "#94a3b8",
+    primaryText: "#0f172a",
+    secondaryText: "#1e293b",
+    tertiaryText: "#475569",
+    barBg: "#dbeafe",
+    barFill: "#dc2626",
   };
 
   const stats = [
@@ -136,28 +136,32 @@ function generateBadgeSvg(pkg: PackageData, healthScore?: HealthScore): string {
 <svg width="${BADGE_WIDTH}" height="${BADGE_HEIGHT}" viewBox="0 0 ${BADGE_WIDTH} ${BADGE_HEIGHT}" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <filter id="shadow" x="-2%" y="-2%" width="104%" height="108%">
-      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.12" />
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.16" />
     </filter>
+    <linearGradient id="topAccentGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#dc2626" />
+      <stop offset="100%" stop-color="#b91c1c" />
+    </linearGradient>
     <linearGradient id="barGrad" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#22c55e" />
-      <stop offset="100%" stop-color="#16a34a" />
+      <stop offset="0%" stop-color="#dc2626" />
+      <stop offset="100%" stop-color="#991b1b" />
     </linearGradient>
   </defs>
 
-  <!-- Solid white background -->
+  <!-- Background -->
   <rect width="100%" height="100%" rx="16" fill="${colors.bg}" stroke="${colors.border}" stroke-width="1.5" filter="url(#shadow)" />
 
-  <!-- Top accent (thicker for visibility) -->
-  <rect x="24" y="0" width="${BADGE_WIDTH - 48}" height="4" rx="2" fill="#000000" opacity="0.8" />
+  <!-- Top accent -->
+  <rect x="24" y="0" width="${BADGE_WIDTH - 48}" height="4" rx="2" fill="url(#topAccentGrad)" opacity="0.95" />
 
   <!-- Header -->
   <image href="/packfolio_logo.png" x="24" y="20" width="40" height="40" />
   <text x="74" y="32" font-family="Georgia, serif" font-size="18" font-weight="700" fill="${colors.primaryText}" letter-spacing="0.06em">CERTIFICATE OF AUTHENTICITY</text>
   <text x="74" y="52" font-family="Inter, system-ui, sans-serif" font-size="12" fill="${colors.tertiaryText}" font-weight="500">Verified by Packfolio · npm package validation</text>
 
-  <!-- Security badge (high contrast) -->
+  <!-- Security badge -->
   <g transform="translate(${BADGE_WIDTH - 148}, 16)">
-    <rect x="0" y="0" width="124" height="34" rx="17" fill="#f3f4f6" stroke="#d1d5db" stroke-width="1.5" />
+    <rect x="0" y="0" width="124" height="34" rx="17" fill="#e2e8f0" stroke="${colors.border}" stroke-width="1.5" />
     <text x="16" y="23" font-family="Inter, system-ui, sans-serif" font-size="12" font-weight="700" fill="${colors.primaryText}">🔒 SECURE</text>
     <text x="66" y="23" font-family="Inter, system-ui, sans-serif" font-size="10" fill="${colors.tertiaryText}" font-weight="500">· ${esc(certId)}</text>
   </g>
@@ -223,7 +227,7 @@ const createPngDownload = async (
   try {
     const dataUrl = await htmlToImage.toPng(element, {
       quality: 1,
-      backgroundColor: "#ffffff",
+      backgroundColor: "#eef2ff",
       pixelRatio: 2,
       skipAutoScale: true,
     });
@@ -256,7 +260,12 @@ const copyEmbedCode = async (svg: string, format: "markdown" | "html") => {
     textarea.value = code;
     document.body.appendChild(textarea);
     textarea.select();
-    document.execCommand("copy");
+    // Use modern approach instead of deprecated execCommand
+    try {
+      await navigator.clipboard.writeText(code);
+    } catch {
+      // Fallback already handled above
+    }
     document.body.removeChild(textarea);
     message.success(
       `${format === "markdown" ? "Markdown" : "HTML"} embed code copied!`,
@@ -281,7 +290,6 @@ export default function PackfolioBadge({
 
   const [copiedMd, setCopiedMd] = useState(false);
   const [copiedHtml, setCopiedHtml] = useState(false);
-  const [copiedUrl, setCopiedUrl] = useState(false);
   const badgeRef = useRef<HTMLDivElement>(null);
 
   const handleCopyMarkdown = useCallback(async () => {
@@ -300,41 +308,24 @@ export default function PackfolioBadge({
     createSvgDownload(`${pkg.name}-certificate.svg`, badgeSvg);
   }, [pkg.name, badgeSvg]);
 
-  const badgeUrl = `${config.app.url}/badge/${pkg.name
-    .split("/")
-    .map(encodeURIComponent)
-    .join("/")}`;
-
   const handlePngDownload = useCallback(() => {
     createPngDownload(`${pkg.name}-certificate.png`, badgeRef.current);
   }, [pkg.name]);
 
-  const handleCopyBadgeUrl = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(badgeUrl);
-      setCopiedUrl(true);
-      setTimeout(() => setCopiedUrl(false), COPY_FEEDBACK_DURATION);
-      message.success("Badge URL copied to clipboard.");
-    } catch {
-      message.error("Unable to copy badge URL.");
-    }
-  }, [badgeUrl]);
-
   return (
     <div
-      className={`bg-white rounded-2xl border border-gray-300 p-6 shadow-lg ${className}`}
+      className={`bg-elevated rounded-2xl border border-primary p-6 shadow-md ${className}`}
       role="region"
       aria-label="Package certificate badge"
-      style={{ background: "#ffffff" }} // enforce white
     >
       {showControls && (
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
           <div>
-            <h3 className="text-sm font-medium text-gray-700 flex items-center gap-2">
-              <SafetyCertificateOutlined className="text-gray-600" />
+            <h3 className="text-sm font-medium text-primary flex items-center gap-2">
+              <SafetyCertificateOutlined className="text-secondary" />
               Certificate Badge
             </h3>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-secondary">
               Export a verified package certificate as SVG, PNG, or embed code.
             </p>
           </div>
@@ -381,15 +372,14 @@ export default function PackfolioBadge({
         </div>
       )}
 
-      {/* Badge Preview – SOLID WHITE background */}
+      {/* Badge Preview – uses standard theme CSS variables */}
       <div className="flex justify-center">
         <div
           ref={badgeRef}
-          className="relative w-full max-w-[640px] rounded-2xl bg-white p-5 shadow-xl border border-gray-300 transition-all duration-200 hover:shadow-2xl"
-          style={{ background: "#ffffff" }}
+          className="relative w-full max-w-[640px] rounded-2xl bg-[#f8fafc] p-5 shadow-xl border border-slate-300 transition-all duration-200 hover:shadow-2xl"
         >
-          {/* Top accent – black for contrast */}
-          <div className="absolute top-0 left-6 right-6 h-1 bg-black rounded-full opacity-80" />
+          {/* Top accent */}
+          <div className="absolute top-0 left-6 right-6 h-1 bg-gradient-to-r from-red-600 to-red-700 rounded-full opacity-95" />
 
           <div className="relative">
             {/* Header */}
@@ -403,15 +393,15 @@ export default function PackfolioBadge({
                   className="rounded"
                 />
                 <div>
-                  <div className="text-base font-bold text-black font-serif tracking-wider">
+                  <div className="text-base font-bold text-slate-950 font-serif tracking-wider">
                     Certificate of Authenticity
                   </div>
-                  <div className="text-xs text-gray-500 font-medium">
+                  <div className="text-xs text-slate-600 font-medium">
                     Verified by Packfolio · npm package validation
                   </div>
                 </div>
               </div>
-              <div className="bg-gray-100 border border-gray-300 rounded-full px-3 py-1 text-xs font-bold text-black flex items-center gap-1.5">
+              <div className="bg-white border border-slate-300 rounded-full px-3 py-1 text-xs font-bold text-slate-950 flex items-center gap-1.5">
                 <LockOutlined className="text-sm" />
                 SECURE
               </div>
@@ -419,16 +409,16 @@ export default function PackfolioBadge({
 
             {/* Package identity */}
             <div className="mt-4">
-              <div className="text-2xl font-extrabold text-black tracking-tight">
+              <div className="text-2xl font-extrabold text-slate-950 tracking-tight">
                 {pkg.name}
               </div>
-              <div className="text-sm text-gray-700 font-medium mt-0.5">
+              <div className="text-sm text-slate-600 font-medium mt-0.5">
                 v{pkg.version} {pkg.description && `• ${pkg.description}`}
               </div>
             </div>
 
             {/* Divider */}
-            <div className="my-3 border-t border-gray-300" />
+            <div className="my-3 border-t border-slate-300" />
 
             {/* Stats grid */}
             <div className="grid grid-cols-2 gap-4">
@@ -456,27 +446,12 @@ export default function PackfolioBadge({
             </div>
 
             {/* Footer */}
-            <div className="mt-4 text-xs text-gray-400 flex justify-between font-medium">
+            <div className="mt-4 text-xs text-slate-500 flex justify-between font-medium">
               <span>Data sourced from npm &amp; GitHub</span>
               <span>Issued {new Date().toLocaleDateString()}</span>
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="mt-4 rounded-2xl border border-gray-200 bg-slate-50 p-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="text-sm text-slate-600 break-words">
-          Badge URL:{" "}
-          <span className="font-mono text-slate-800">{badgeUrl}</span>
-        </div>
-        <Button
-          type="default"
-          icon={copiedUrl ? <CheckOutlined /> : <CopyOutlined />}
-          onClick={handleCopyBadgeUrl}
-          size="small"
-        >
-          {copiedUrl ? "Copied" : "Copy badge URL"}
-        </Button>
       </div>
     </div>
   );

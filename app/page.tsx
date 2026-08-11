@@ -571,7 +571,7 @@ function HomeContent() {
                 }}
               />
               <div>
-                <p className="text-lg font-bold text-white">PackFolio</p>
+                <p className="text-lg font-bold text-primary">PackFolio</p>
               </div>
             </div>
 
@@ -626,7 +626,7 @@ function HomeContent() {
             {/* Logo (desktop) */}
             <div className="hidden sm:flex items-center gap-4 flex-shrink-0">
               <div>
-                <p className="text-xl font-bold text-white">PackFolio</p>
+                <p className="text-xl font-bold text-primary">PackFolio</p>
               </div>
               <div
                 className="h-6 w-px"
